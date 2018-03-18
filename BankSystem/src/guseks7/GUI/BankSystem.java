@@ -4,16 +4,20 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import static java.awt.GridBagConstraints.*;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import guseks7.logic.BankLogic;
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.Vector;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
 
 public class BankSystem extends JFrame {
-
+        
+        private BankLogic myBank;
 	private static final int FRAME_WIDTH = 1200;
 	private static final int FRAME_HEIGHT = 700;
 	
@@ -29,14 +33,16 @@ public class BankSystem extends JFrame {
         
 	private JTable customerTable;
         private JList accountList;
+        private JComboBox chooseCustomer;
         private JTextField workflow;
         
         
 	
 	
 	public BankSystem() {
-		
-		
+		myBank = new BankLogic();
+		myBank.createCustomer("Gustaf", "Ekström", "9306025595");
+                myBank.createCustomer("Marcus", "Ekström", "9306026197");
                 createControlPanel();
 		
 		setSize(FRAME_WIDTH, FRAME_HEIGHT);
@@ -48,54 +54,51 @@ public class BankSystem extends JFrame {
         private void createControlPanel(){
             JPanel inputPanel = createInputPanel();
             JPanel displayPanel = createDisplayPanel();
-            setLayout(new GridLayout(2,1));
-            add(inputPanel);
-            add(displayPanel);
+            setLayout(new GridBagLayout());
+            
+            GridBagConstraints inputPanelConfig = new GridBagConstraints();
+            setConstraints(inputPanelConfig, 0, 0, 1, 1, "both", new Insets(0, 0, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+            add(inputPanel, inputPanelConfig);
+            GridBagConstraints displayPanelConfig = new GridBagConstraints();
+            setConstraints(displayPanelConfig, 0, 1, 1, 1, "both", new Insets(20, 0, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+            //displayPanel.setPreferredSize(new Dimension(800, 400))
+            add(displayPanel, displayPanelConfig);
         }
         
         private JPanel createInputPanel(){
             createButtons();
-            JPanel panel = new JPanel(new GridBagLayout());
-            panel.setPreferredSize(new Dimension(400,200));
+            JPanel panel = new JPanel(new BorderLayout());
+            //panel.setPreferredSize(new Dimension(400,200));
             JPanel customerOperationsWrapper = new JPanel(new GridBagLayout());
             JPanel accountOperationsWrapper = new JPanel(new GridBagLayout());
             
             GridBagConstraints createCustomerConfig = new GridBagConstraints();
-            setConstraints(createCustomerConfig, 0, 0, 1, 1, "None", new Insets(5, 0, 0, 0), FIRST_LINE_START);
+            setConstraints(createCustomerConfig, 0, 0, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
             
             GridBagConstraints deleteCustomerConfig = new GridBagConstraints();
-            setConstraints(deleteCustomerConfig, 1, 0, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START);
+            setConstraints(deleteCustomerConfig, 1, 0, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
             
             GridBagConstraints changeNameConfig = new GridBagConstraints();
-            setConstraints(changeNameConfig, 2, 0, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START);
+            setConstraints(changeNameConfig, 2, 0, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+            
+            GridBagConstraints createSavingsConfig = new GridBagConstraints();
+            setConstraints(createSavingsConfig, 0, 1, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+            GridBagConstraints createCreditConfig = new GridBagConstraints();
+            setConstraints(createCreditConfig, 1, 1, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
             
             customerOperationsWrapper.add(createCustomer, createCustomerConfig);
             customerOperationsWrapper.add(deleteCustomer, deleteCustomerConfig);
             customerOperationsWrapper.add(changeName, changeNameConfig);
+            customerOperationsWrapper.add(createSavings, createSavingsConfig);
+            customerOperationsWrapper.add(createCredit, createCreditConfig);
             
             
-            GridBagConstraints createSavingsConfig = new GridBagConstraints();
-            setConstraints(createSavingsConfig, 0, 0, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START);
-            GridBagConstraints createCreditConfig = new GridBagConstraints();
-            setConstraints(createCreditConfig, 0, 1, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START);
-            GridBagConstraints deleteAccountConfig = new GridBagConstraints();
-            setConstraints(deleteAccountConfig, 0, 2, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START);
-            GridBagConstraints getTransactionsConfig = new GridBagConstraints();
-            setConstraints(getTransactionsConfig, 1, 0, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START);
-            GridBagConstraints depositConfig = new GridBagConstraints();
-            setConstraints(depositConfig, 1, 1, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START);
-            GridBagConstraints withdrawConfig = new GridBagConstraints();
-            setConstraints(withdrawConfig, 1, 2, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START);
-            accountOperationsWrapper.add(createSavings, createSavingsConfig);
-            accountOperationsWrapper.add(createCredit, createCreditConfig);
-            accountOperationsWrapper.add(deleteAccount, deleteAccountConfig);
-            accountOperationsWrapper.add(getTransactions, getTransactionsConfig);
-            accountOperationsWrapper.add(deposit, depositConfig);
-            accountOperationsWrapper.add(withdraw, withdrawConfig);
+            
+           
             
             
             GridBagConstraints customerOperationsWrapperConfig = new GridBagConstraints();
-            setConstraints(customerOperationsWrapperConfig, 0, 0, 1, 1, "None", new Insets(70, 5, 0, 0), FIRST_LINE_START);
+            setConstraints(customerOperationsWrapperConfig, 0, 0, 1, 1, "None", new Insets(70, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
             //customerOperationsWrapper.setBorder(new TitledBorder("Mark Customer in List and choose desired operation"));
             
             /*
@@ -104,22 +107,117 @@ public class BankSystem extends JFrame {
             setConstraints(custOperationsInstructionsConfig, 0, 1, 1, 1, "None", new Insets(10, 5, 0, 0), FIRST_LINE_START);
             customerOperationsWrapper.add(custOperationsInstructions, custOperationsInstructionsConfig);
 */
-            panel.add(customerOperationsWrapper, customerOperationsWrapperConfig);
+            //panel.add(customerOperationsWrapper, customerOperationsWrapperConfig);
+            panel.add(customerOperationsWrapper, BorderLayout.WEST);
             
             GridBagConstraints accountOperationsWrapperConfig = new GridBagConstraints();
-            setConstraints(accountOperationsWrapperConfig, 1, 0, 1, 1, "None", new Insets(0, 20, 0, 0), FIRST_LINE_START);
+            setConstraints(accountOperationsWrapperConfig, 1, 0, 1, 1, "None", new Insets(0, 20, 0, 0), FIRST_LINE_START, 0.5, 0.5);
             //accountOperationsWrapper.setBorder(new TitledBorder("Mark desired account in the List and choose desired operation"));
-            panel.add(accountOperationsWrapper, accountOperationsWrapperConfig);
+            //panel.add(accountOperationsWrapper, accountOperationsWrapperConfig);
             return panel;
         }
         
         private JPanel createDisplayPanel(){
             createDisplay();
-            JPanel panel = new JPanel();
+            JPanel panel = new JPanel(new GridBagLayout());
+            
+            JPanel tableWrapper = new JPanel(new BorderLayout());
+            tableWrapper.setBorder(new TitledBorder("Mark the desired Customer and choose operation"));
+           
+            tableWrapper.add(new JScrollPane(customerTable), BorderLayout.CENTER);
+            
+            
+            GridBagConstraints tableWrapperConfig = new GridBagConstraints();
+            setConstraints(tableWrapperConfig, 0, 0, 1, 1, "None", new Insets(0, 20, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+            panel.add(tableWrapper, tableWrapperConfig);
+            
+            JPanel accountOperationsWrapper = new JPanel(new BorderLayout());
+            GridBagConstraints accountListWrapperConfig = new GridBagConstraints();
+            setConstraints(accountListWrapperConfig, 1, 0, 1, 1, "None", new Insets(0, 20, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+            
+            //accountListWrapper.setBorder(new TitledBorder("Choose desired account and operation"));
+            JPanel chooseCustomerWrapper = new JPanel();
+            chooseCustomerWrapper.setBorder(new TitledBorder("Choose customer to display Accounts"));
+            chooseCustomerWrapper.add(chooseCustomer);
+            
+            JPanel accountListWrapper = new JPanel();
+            accountListWrapper.setBorder(new TitledBorder("Choose desired account and operation"));
+            accountListWrapper.add(accountList);
+            
+            //accountOperationsWrapper.add(chooseCustomerWrapper, BorderLayout.PAGE_START);
+            accountOperationsWrapper.add(accountListWrapper, BorderLayout.CENTER);
+            
+            JPanel OperationsWrapper = new JPanel(new GridBagLayout());
+            
+            GridBagConstraints deleteAccountConfig = new GridBagConstraints();
+            setConstraints(deleteAccountConfig, 0, 0, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+            GridBagConstraints getTransactionsConfig = new GridBagConstraints();
+            setConstraints(getTransactionsConfig, 1, 0, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+            GridBagConstraints depositConfig = new GridBagConstraints();
+            setConstraints(depositConfig, 0, 1, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+            GridBagConstraints withdrawConfig = new GridBagConstraints();
+            setConstraints(withdrawConfig, 1, 1, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+           
+            OperationsWrapper.add(deleteAccount, deleteAccountConfig);
+            OperationsWrapper.add(getTransactions, getTransactionsConfig);
+            OperationsWrapper.add(deposit, depositConfig);
+            OperationsWrapper.add(withdraw, withdrawConfig);
+            
+            accountOperationsWrapper.add(OperationsWrapper, BorderLayout.SOUTH);
+            panel.add(accountOperationsWrapper, accountListWrapperConfig);
+            
+            
+            
+            
+
+            
             return panel;
         }
         
         private void createDisplay(){
+            chooseCustomer = new JComboBox();
+            
+            ArrayList<String> myCustomers = myBank.getAllCustomers();
+            
+            DefaultTableModel tableModel = new DefaultTableModel(){
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                //all cells false
+                    return false;
+                }
+            };
+            tableModel.addColumn("First Name:");
+            tableModel.addColumn("Last Name:");
+            tableModel.addColumn("Personal Number:");
+            DefaultListModel listModel = new DefaultListModel();
+            for(String info : myCustomers){
+                Vector<String> displayInfo = new Vector<>();
+                String[] temp = info.split(" ");
+                
+                tableModel.addRow(temp);
+                
+                
+                
+                chooseCustomer.addItem(info);
+                
+                
+                
+            }
+            Vector<String> columnNames = new Vector<>();
+            columnNames.addElement("First Name: ");
+            columnNames.addElement("Last Name: ");
+            columnNames.addElement("Personal Number: ");
+            
+          
+            //model.addRow(displayInfo);
+            customerTable = new JTable(tableModel);
+            
+
+            //customerTable.setPreferredSize(new Dimension(500, 200));
+            accountList = new JList();
+            accountList.setPreferredSize(new Dimension(400, 200));
+            //chooseCustomer.setPreferredSize(new Dimension(200, 100));
+            
             
         }
         
@@ -146,6 +244,7 @@ public class BankSystem extends JFrame {
                 deposit.setPreferredSize(new Dimension(200, 30));
                 withdraw.setPreferredSize(new Dimension(200, 30));
                 
+                
 		createSavings.addActionListener(new ActionListener()
 			{
 
@@ -166,7 +265,7 @@ public class BankSystem extends JFrame {
 			
 			
             }
-        private void setConstraints(GridBagConstraints c, int gridx, int gridy, int gridwidth, int gridheight, String fillConfig, Insets padding, int pos){
+        private void setConstraints(GridBagConstraints c, int gridx, int gridy, int gridwidth, int gridheight, String fillConfig, Insets padding, int pos, double weightx, double weighty){
             c.gridx = gridx;
             c.gridy = gridy;
             c.gridwidth = gridwidth;
