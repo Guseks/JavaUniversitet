@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import guseks7.logic.BankLogic;
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.*;
@@ -246,22 +247,69 @@ public class BankSystem extends JFrame {
                 
                 
 		createSavings.addActionListener(new ActionListener()
-			{
+                {
+                    public void actionPerformed(ActionEvent arg0) {
+                            System.out.println("Knapp fungerar");
 
-				public void actionPerformed(ActionEvent arg0) {
-					System.out.println("Knapp fungerar");
-					
-				}
-			});
+                    }
+                });
 		createCredit.addActionListener(new ActionListener()
 		{
+                    public void actionPerformed(ActionEvent arg0) {
+                            System.out.println("Knapp fungerar");
 
-			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("Knapp fungerar");
-				
-			}
+                    }
 		});
-			
+		createCustomer.addActionListener(new ActionListener()
+		{
+                    public void actionPerformed(ActionEvent arg0) {
+                            JTextField firstName = new JTextField();
+                            JTextField lastName = new JTextField();
+                            JTextField personalNumber = new JTextField();
+                            JPanel panel = new JPanel(new GridLayout(0, 1));
+                            panel.add(new JLabel("First Name:"));
+                            panel.add(firstName);
+                            panel.add(new JLabel("Last Name:"));
+                            panel.add(lastName);
+                            panel.add(new JLabel("Personal Number"));
+                            panel.add(personalNumber);
+                            String[] output = new String[3];
+                            int result = JOptionPane.showConfirmDialog(null, panel, "Add Loot",
+                                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                            if(result == JOptionPane.OK_OPTION){
+                                output[0] = firstName.getText();
+                                output[1] = lastName.getText();
+                                output[2] = personalNumber.getText();
+                                if(!output[0].isEmpty() && !output[1].isEmpty() && !output[2].isEmpty()){
+                                    myBank.createCustomer(output[0], output[1], output[2]);
+                                    //updateSystem();
+                                }
+                                else{
+                                    JOptionPane.showMessageDialog(null, "Invalid Data", "", JOptionPane.WARNING_MESSAGE);
+                                    
+                                }
+                            }
+                            /*
+                            else{
+                                return new String[]{};
+                            }
+                            */
+                    }
+		});
+                deleteCustomer.addActionListener(new ActionListener()
+		{
+                    public void actionPerformed(ActionEvent arg0) {
+                            System.out.println("Knapp fungerar");
+
+                    }
+		});
+                changeName.addActionListener(new ActionListener()
+		{
+                    public void actionPerformed(ActionEvent arg0) {
+                            System.out.println("Knapp fungerar");
+
+                    }
+		});
 			
 			
             }
