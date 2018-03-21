@@ -14,15 +14,13 @@ import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 public class BankSystem extends JFrame {
 
     private BankLogic myBank;
-    private static final int FRAME_WIDTH = 1200;
+    private static final int FRAME_WIDTH = 1400;
     private static final int FRAME_HEIGHT = 700;
 
     private JButton createSavings;
@@ -37,6 +35,7 @@ public class BankSystem extends JFrame {
 
     private JTable customerTable;
     private JTable accountTable;
+    private JList transactionsList;
     private JComboBox chooseCustomer;
     private JTextField workflow;
 
@@ -56,19 +55,38 @@ public class BankSystem extends JFrame {
     private void createControlPanel() {
         JPanel inputPanel = createInputPanel();
         JPanel displayPanel = createDisplayPanel();
+        JPanel bottomPanel = createBottomPanel();
         setLayout(new GridBagLayout());
 
         GridBagConstraints inputPanelConfig = new GridBagConstraints();
         setConstraints(inputPanelConfig, 0, 0, 3, 1, "both", new Insets(0, 0, 0, 0), FIRST_LINE_START, 0.5, 0.5);
-        inputPanel.setPreferredSize(new Dimension(900, 100));
+        inputPanel.setPreferredSize(new Dimension(600, 150));
         add(inputPanel, inputPanelConfig);
         GridBagConstraints displayPanelConfig = new GridBagConstraints();
-        setConstraints(displayPanelConfig, 0, 2, 3, 3, "both", new Insets(0, 0, 0, 0), FIRST_LINE_START, 0.5, 0.5);
-        displayPanel.setPreferredSize(new Dimension(1000, 400));
+        setConstraints(displayPanelConfig, 0, 1, 2, 3, "both", new Insets(0, 0, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+        displayPanel.setPreferredSize(new Dimension(1300, 400));
         add(displayPanel, displayPanelConfig);
-        
+        /*
+        GridBagConstraints bottomPanelConfig = new GridBagConstraints();
+        setConstraints(bottomPanelConfig, 3, 2, 1, 1, "both", new Insets(0, 50, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+        bottomPanel.setPreferredSize(new Dimension(400, 200));
+        add(bottomPanel, bottomPanelConfig);
+        */
     }
-
+    
+    private JPanel createBottomPanel(){
+        JPanel panel = new JPanel(new GridBagLayout());
+        JPanel transactionsListWrapper = new JPanel(new BorderLayout());
+        transactionsListWrapper.add(transactionsList, BorderLayout.CENTER);
+        transactionsListWrapper.setBorder(new TitledBorder("Made Transactions on chosen account"));
+        
+        GridBagConstraints transactionsListWrapperConfig = new GridBagConstraints();
+        setConstraints(transactionsListWrapperConfig, 2, 0, 1, 1, "both", new Insets(0, 0, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+        panel.add(transactionsListWrapper, transactionsListWrapperConfig);
+        
+        return panel;
+    }
+    
     private JPanel createInputPanel() {
         createButtons();
         JPanel panel = new JPanel(new BorderLayout());
@@ -97,7 +115,7 @@ public class BankSystem extends JFrame {
         customerOperationsWrapper.add(createCredit, createCreditConfig);
 
         GridBagConstraints customerOperationsWrapperConfig = new GridBagConstraints();
-        setConstraints(customerOperationsWrapperConfig, 0, 0, 1, 1, "None", new Insets(70, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+        setConstraints(customerOperationsWrapperConfig, 0, 0, 1, 1, "None", new Insets(0, 0, 0, 0), FIRST_LINE_START, 0.5, 0.5);
         //customerOperationsWrapper.setBorder(new TitledBorder("Mark Customer in List and choose desired operation"));
 
         /*
@@ -118,33 +136,42 @@ public class BankSystem extends JFrame {
 
     private JPanel createDisplayPanel() {
         createDisplay();
-        JPanel panel = new JPanel(new GridBagLayout());
+        JPanel panel = new JPanel(new BorderLayout());
 
         JPanel tableWrapper = new JPanel(new BorderLayout());
         tableWrapper.setBorder(new TitledBorder("Mark the desired Customer and choose operation"));
-        tableWrapper.setPreferredSize(new Dimension(400, 200));
-        tableWrapper.add(new JScrollPane(customerTable), BorderLayout.CENTER);
+        tableWrapper.setPreferredSize(new Dimension(400, 100));
+        GridBagConstraints customerTableConfig = new GridBagConstraints();
+        setConstraints(customerTableConfig, 1, 1, 3, 3, "both", new Insets(0, 0, 0, 0), FIRST_LINE_START, 1, 1);
+        tableWrapper.add(new JScrollPane(customerTable, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
 
         GridBagConstraints tableWrapperConfig = new GridBagConstraints();
         setConstraints(tableWrapperConfig, 0, 0, 1, 1, "both", new Insets(0, 20, 0, 0), FIRST_LINE_START, 0.5, 0.5);
-        panel.add(tableWrapper, tableWrapperConfig);
+        panel.add(tableWrapper, BorderLayout.WEST);
 
-        JPanel accountOperationsWrapper = new JPanel(new BorderLayout());
-        GridBagConstraints accountListWrapperConfig = new GridBagConstraints();
-        setConstraints(accountListWrapperConfig, 1, 0, 1, 1, "both", new Insets(0, 40, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+        JPanel accountOperationsWrapper = new JPanel(new GridBagLayout());
+        
 
         //accountListWrapper.setBorder(new TitledBorder("Choose desired account and operation"));
         JPanel chooseCustomerWrapper = new JPanel();
         chooseCustomerWrapper.setBorder(new TitledBorder("Choose customer to display Accounts"));
         chooseCustomerWrapper.add(chooseCustomer);
 
-        JPanel accountListWrapper = new JPanel();
-        accountListWrapper.setPreferredSize(new Dimension(500, 200));
-        accountListWrapper.setBorder(new TitledBorder("Choose desired account and operation"));
-        accountListWrapper.add(new JScrollPane(accountTable));
-
-        //accountOperationsWrapper.add(chooseCustomerWrapper, BorderLayout.PAGE_START);
-        accountOperationsWrapper.add(accountListWrapper, BorderLayout.CENTER);
+        JPanel accountTableWrapper = new JPanel(new BorderLayout());
+        accountTableWrapper.setPreferredSize(new Dimension(500, 200));
+        accountTableWrapper.setBorder(new TitledBorder("Choose desired account and operation"));
+        JScrollPane accountTableScroll = new JScrollPane();
+        accountTableScroll.setPreferredSize(new Dimension(500,100));
+        //accountTable.setPreferredSize(new Dimension(450,150));
+        //JScrollPane accountTableScroll = new JScrollPane(accountTable, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
+        accountTableWrapper.add(new JScrollPane(accountTable, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+        
+        GridBagConstraints chooseCustomerWrapperConfig = new GridBagConstraints();
+        setConstraints(chooseCustomerWrapperConfig, 0, 0, 1, 1, "both", new Insets(0, 0, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+        accountOperationsWrapper.add(chooseCustomerWrapper, chooseCustomerWrapperConfig);
+        GridBagConstraints accountTableWrapperConfig = new GridBagConstraints();
+        setConstraints(accountTableWrapperConfig, 0, 1, 1, 1, "both", new Insets(5, 0, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+        accountOperationsWrapper.add(accountTableWrapper, accountTableWrapperConfig);
 
         JPanel OperationsWrapper = new JPanel(new GridBagLayout());
 
@@ -161,18 +188,29 @@ public class BankSystem extends JFrame {
         OperationsWrapper.add(getTransactions, getTransactionsConfig);
         OperationsWrapper.add(deposit, depositConfig);
         OperationsWrapper.add(withdraw, withdrawConfig);
-
-        accountOperationsWrapper.add(OperationsWrapper, BorderLayout.SOUTH);
-        panel.add(accountOperationsWrapper, accountListWrapperConfig);
+        
+        GridBagConstraints OperationsWrapperConfig = new GridBagConstraints();
+        setConstraints(OperationsWrapperConfig, 0, 2, 1, 1, "both", new Insets(20, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+        accountOperationsWrapper.add(OperationsWrapper, OperationsWrapperConfig);
+        GridBagConstraints accountListWrapperConfig = new GridBagConstraints();
+        setConstraints(accountListWrapperConfig, 1, 0, 1, 1, "both", new Insets(0, 40, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+        panel.add(accountOperationsWrapper, BorderLayout.CENTER);
+        
+        JPanel transactionsListWrapper = new JPanel(new BorderLayout());
+        transactionsListWrapper.add(new JScrollPane(transactionsList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+        transactionsListWrapper.setBorder(new TitledBorder("Made Transactions on chosen account"));
+        transactionsListWrapper.setPreferredSize(new Dimension(350, 200));
+        
+        GridBagConstraints transactionsListWrapperConfig = new GridBagConstraints();
+        setConstraints(transactionsListWrapperConfig, 2, 0, 1, 1, "both", new Insets(0, 0, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+        panel.add(transactionsListWrapper, BorderLayout.EAST);
 
         return panel;
     }
 
     private void createDisplay() {
         chooseCustomer = new JComboBox();
-
         ArrayList<String> myCustomers = myBank.getAllCustomers();
-
         DefaultTableModel myTableModel = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -187,23 +225,22 @@ public class BankSystem extends JFrame {
         for (String info : myCustomers) {
             Vector<String> displayInfo = new Vector<>();
             String[] temp = info.split(" ");
-
             myTableModel.addRow(temp);
-
             chooseCustomer.addItem(info);
 
         }
 
-        Vector<String> columnNames = new Vector<>();
-        columnNames.addElement("First Name: ");
-        columnNames.addElement("Last Name: ");
-        columnNames.addElement("Personal Number: ");
-
-        //model.addRow(displayInfo);
         customerTable = new JTable(myTableModel);
-
+        ListSelectionModel myCustomerSelectionModel = customerTable.getSelectionModel();
+        myCustomerSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         //customerTable.setPreferredSize(new Dimension(500, 200));
-        DefaultTableModel myAccountTableModel = new DefaultTableModel();
+        DefaultTableModel myAccountTableModel = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                //all cells false
+                return false;
+            }
+        };
         myAccountTableModel.addColumn("Account ID:");
         myAccountTableModel.addColumn("Saldo:");
         myAccountTableModel.addColumn("Account Type:");
@@ -211,26 +248,30 @@ public class BankSystem extends JFrame {
         accountTable = new JTable(myAccountTableModel);
         //accountTable.setPreferredSize(new Dimension(400, 150));
         //chooseCustomer.setPreferredSize(new Dimension(200, 100));
-
-        customerTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+        
+        chooseCustomer.addActionListener(new ActionListener(){
             @Override
-            public void valueChanged(ListSelectionEvent lse) {
-                System.out.println("Hej");
-                DefaultTableModel myAccountTableModel = (DefaultTableModel) accountTable.getModel();
-                int selectedRow = customerTable.getSelectedRow();
+            public void actionPerformed(ActionEvent ae) {
+                String selectedItem = (String)chooseCustomer.getSelectedItem();
+                String personalNumber = selectedItem.split(" ")[2];
+                DefaultTableModel myAccountTableModel = (DefaultTableModel)accountTable.getModel();
                 accountTable.removeAll();
-                ArrayList<String> accountNumbers = myBank.getAccountNrs((String) myTableModel.getValueAt(selectedRow, 2));
-                for (String info : accountNumbers) {
-                    String[] temp = info.split(" ");
-                    myAccountTableModel.addRow(temp);
-
-                    
-
+                for(int i = 0; i < myAccountTableModel.getRowCount(); i++){
+                    myAccountTableModel.removeRow(i);
                 }
-
+                
+                ArrayList<String> accountNumbers = myBank.getAccountNrs((personalNumber));
+                for(String accountID : accountNumbers){
+                    myAccountTableModel.addRow(myBank.getAccount(personalNumber, Integer.parseInt(accountID)).split(" "));
+                }
+                
             }
+            
         });
-
+        
+        
+       transactionsList = new JList();
+       //transactionsList.setPreferredSize(new Dimension(300,100));
     }
 
     private void createButtons() {
@@ -258,12 +299,15 @@ public class BankSystem extends JFrame {
             public void actionPerformed(ActionEvent arg0) {
                 DefaultTableModel myTableModel = (DefaultTableModel) customerTable.getModel();
                 int selectedRow = customerTable.getSelectedRow();
+                String personalNumber = (String) myTableModel.getValueAt(selectedRow, 2);
                 //System.out.println(selectedRow);
                 if (selectedRow == -1) {
                     JOptionPane.showMessageDialog(null, "No Customer Selected", "", JOptionPane.PLAIN_MESSAGE);
                 } else {
-                    myBank.createSavingsAccount((String) myTableModel.getValueAt(selectedRow, 2));
-                    System.out.println(myBank.getCustomer((String) myTableModel.getValueAt(selectedRow, 2)));
+                    int accountID = myBank.createSavingsAccount(personalNumber);
+                    //System.out.println(myBank.getCustomer((String) myTableModel.getValueAt(selectedRow, 2)));
+                    DefaultTableModel myAccountTableModel = (DefaultTableModel)accountTable.getModel();
+                    myAccountTableModel.addRow(myBank.getAccount(personalNumber, accountID).split(" "));
                 }
 
             }
@@ -272,11 +316,19 @@ public class BankSystem extends JFrame {
             public void actionPerformed(ActionEvent arg0) {
                 DefaultTableModel myTableModel = (DefaultTableModel) customerTable.getModel();
                 int selectedRow = customerTable.getSelectedRow();
+                String personalNumber = (String) myTableModel.getValueAt(selectedRow, 2);
                 if (selectedRow == -1) {
                     JOptionPane.showMessageDialog(null, "No Customer Selected", "", JOptionPane.PLAIN_MESSAGE);
                 } else {
-                    myBank.createCreditAccount((String) myTableModel.getValueAt(selectedRow, 2));
-                    System.out.println(myBank.getCustomer((String) myTableModel.getValueAt(selectedRow, 2)));
+                    int accountID = myBank.createCreditAccount(personalNumber);
+                    //System.out.println(myBank.getCustomer((String) myTableModel.getValueAt(selectedRow, 2)));
+                    String selectedItem = (String)chooseCustomer.getSelectedItem();
+                    String selectedPersonalNumber = selectedItem.split(" ")[2];
+                    if(personalNumber.equals(selectedPersonalNumber)){
+                        DefaultTableModel myAccountTableModel = (DefaultTableModel)accountTable.getModel();
+                        myAccountTableModel.addRow(myBank.getAccount(personalNumber, accountID).split(" "));
+                    }
+                    
                 }
 
             }
