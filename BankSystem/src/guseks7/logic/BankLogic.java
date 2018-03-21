@@ -23,7 +23,7 @@ public class BankLogic {
 	public boolean createCustomer(String name, String Surname, String pNo) {
 		boolean pNoIsUnique = true;
 		for(int i = 0; i < myCustomers.size(); i++) {
-			if(myCustomers.get(i).getPersonalNumber() == pNo) {
+			if(myCustomers.get(i).getPersonalNumber().equals(pNo)) {
 				pNoIsUnique = false;
 			}
 		}
@@ -59,7 +59,7 @@ public class BankLogic {
 		boolean customerExist = false;
 		ArrayList<String> temp = new ArrayList<String>();
 		for(int i = 0; i < myCustomers.size(); i++) {
-			if(myCustomers.get(i).getPersonalNumber() == pNo) {
+			if(myCustomers.get(i).getPersonalNumber().equals(pNo)) {
 				customerExist = true;
 
 				String part1 = myCustomers.get(i).getInfo();
@@ -91,7 +91,7 @@ public class BankLogic {
 	public int createSavingsAccount(String pNo) {
 		boolean AccountCreated = false;
 		for(int i = 0; i < myCustomers.size(); i++) {
-			if(myCustomers.get(i).getPersonalNumber() == pNo) {
+			if(myCustomers.get(i).getPersonalNumber().equals(pNo)) {
 				myCustomers.get(i).createAccount(lastAssignedNumber+1, "Sparkonto");
 				lastAssignedNumber++;
 				AccountCreated = true;
@@ -113,7 +113,7 @@ public class BankLogic {
 	public int createCreditAccount(String pNo) {
 		boolean AccountCreated = false;
 		for(int i = 0; i < myCustomers.size(); i++) {
-			if(myCustomers.get(i).getPersonalNumber() == pNo) {
+			if(myCustomers.get(i).getPersonalNumber().equals(pNo)) {
 				myCustomers.get(i).createAccount(lastAssignedNumber+1, "Kreditkonto");
 				lastAssignedNumber++;
 				AccountCreated = true;
@@ -134,7 +134,7 @@ public class BankLogic {
 	public  boolean changeCustomerName(String name, String surname, String pNo) {
 		boolean nameChanged = false;
 		for(int i = 0; i < myCustomers.size(); i++) {
-			if(myCustomers.get(i).getPersonalNumber() == pNo) {
+			if(myCustomers.get(i).getPersonalNumber().equals(pNo)) {
 				myCustomers.get(i).setName(name, surname);
 				nameChanged = true;
 			}
@@ -153,14 +153,14 @@ public class BankLogic {
 		boolean deleted = false;
 		ArrayList<String> temp = new ArrayList<String>();
 		for(int i = 0; i < myCustomers.size(); i++) {
-			if(myCustomers.get(i).getPersonalNumber() == pNo) {
+			if(myCustomers.get(i).getPersonalNumber().equals(pNo)) {
 				temp.add(myCustomers.get(i).getInfo());
 				String help = myCustomers.get(i).closeAccounts();
 				if(!help.isEmpty()) {
 					String[] helpString = help.split(",");
-					for(int j = 0; j < helpString.length; j++) {
-						temp.add(helpString[j]);
-					}
+                                    for (String helpString1 : helpString) {
+                                        temp.add(helpString1);
+                                    }
 				}
 				myCustomers.remove(i);
 				deleted = true;
@@ -185,7 +185,7 @@ public class BankLogic {
 		boolean accountFound = false;
 		String returnString = "";
 		for(int i = 0; i < myCustomers.size(); i++) {
-			if(myCustomers.get(i).getPersonalNumber() == pNo) {
+			if(myCustomers.get(i).getPersonalNumber().equals(pNo)) {
 				ArrayList<String> help = myCustomers.get(i).getAccountNrs();
 				for(int j = 0; j < help.size(); j++) {
 					if(accountId == Integer.parseInt(help.get(j))){
@@ -224,7 +224,7 @@ public class BankLogic {
 		ArrayList<String> temp = new ArrayList<String>();
 		boolean done = false;
 		for(int i = 0; i < myCustomers.size(); i++) {
-			if(myCustomers.get(i).getPersonalNumber() == pNo) {
+			if(myCustomers.get(i).getPersonalNumber().equals(pNo)) {
 				ArrayList<String> help = myCustomers.get(i).getAccountNrs();
 				for(int j = 0; j < help.size(); j++) {
 					if(accountId == Integer.parseInt(help.get(j))){
@@ -250,7 +250,7 @@ public class BankLogic {
 	public boolean deposit(String pNo, int accountId, double amount) {
 		boolean depositDone = false;
 		for(int i = 0; i < myCustomers.size(); i++) {
-			if(myCustomers.get(i).getPersonalNumber() == pNo) {
+			if(myCustomers.get(i).getPersonalNumber().equals(pNo)) {
 				ArrayList<String> help = myCustomers.get(i).getAccountNrs();
 				for(int j = 0; j < help.size(); j++) {
 					if(accountId == Integer.parseInt(help.get(j))){
@@ -262,12 +262,7 @@ public class BankLogic {
 				}
 			}
 		}
-		if(depositDone) {
-			return true;
-		}
-		else {
-			return false;
-		}
+            return depositDone;
 	}
 
 	/*
@@ -288,12 +283,7 @@ public class BankLogic {
 				}
 			}
 		}
-		if (withdrawalDone) {
-			return true;
-		}
-		else {
-			return false;
-		}
+            return withdrawalDone;
 	}
 	
 	/*
@@ -303,7 +293,7 @@ public class BankLogic {
 		boolean accountClosed = false;
 		String helpString = "";
 		for(int i = 0; i < myCustomers.size(); i++) {
-			if(myCustomers.get(i).getPersonalNumber() == pNo) {
+			if(myCustomers.get(i).getPersonalNumber().equals(pNo)) {
 				
 				//Gets all the account numbers. Used to make sure the account specified 
 				//belongs to the customer.
