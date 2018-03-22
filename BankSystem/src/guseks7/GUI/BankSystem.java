@@ -14,8 +14,9 @@ import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 public class BankSystem extends JFrame {
 
@@ -168,7 +169,7 @@ public class BankSystem extends JFrame {
         
         GridBagConstraints chooseCustomerWrapperConfig = new GridBagConstraints();
         setConstraints(chooseCustomerWrapperConfig, 0, 0, 1, 1, "both", new Insets(0, 0, 0, 0), FIRST_LINE_START, 0.5, 0.5);
-        accountOperationsWrapper.add(chooseCustomerWrapper, chooseCustomerWrapperConfig);
+        //accountOperationsWrapper.add(chooseCustomerWrapper, chooseCustomerWrapperConfig);
         GridBagConstraints accountTableWrapperConfig = new GridBagConstraints();
         setConstraints(accountTableWrapperConfig, 0, 1, 1, 1, "both", new Insets(5, 0, 0, 0), FIRST_LINE_START, 0.5, 0.5);
         accountOperationsWrapper.add(accountTableWrapper, accountTableWrapperConfig);
@@ -269,8 +270,33 @@ public class BankSystem extends JFrame {
             
         });
         
+        customerTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent lse) {
+                DefaultTableModel myTableModel = (DefaultTableModel) customerTable.getModel();
+                DefaultTableModel myAccountTableModel = (DefaultTableModel)accountTable.getModel();
+                int selectedRow = customerTable.getSelectedRow();
+                String personalNumber = (String)myTableModel.getValueAt(selectedRow, 2);
+                //accountTable.removeAll();
+                
+                
+                while(myAccountTableModel.getRowCount() > 0){
+                    for(int i = 0; i < myAccountTableModel.getRowCount(); i++){
+                    myAccountTableModel.removeRow(i);
+                    accountTable.repaint();
+                    }
+                }
+                
+                
+                ArrayList<String> accountNumbers = myBank.getAccountNrs((personalNumber));
+                for(String accountID : accountNumbers){
+                    myAccountTableModel.addRow(myBank.getAccount(personalNumber, Integer.parseInt(accountID)).split(" "));
+                }
+            }
+        });
         
-       transactionsList = new JList();
+       DefaultListModel myTransactionListModel = new DefaultListModel();
+       transactionsList = new JList(myTransactionListModel);
        //transactionsList.setPreferredSize(new Dimension(300,100));
     }
 
@@ -294,8 +320,14 @@ public class BankSystem extends JFrame {
         getTransactions.setPreferredSize(new Dimension(200, 30));
         deposit.setPreferredSize(new Dimension(200, 30));
         withdraw.setPreferredSize(new Dimension(200, 30));
+        
+       addButtonFunctions();
 
+    }
+
+    private void addButtonFunctions(){
         createSavings.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent arg0) {
                 DefaultTableModel myTableModel = (DefaultTableModel) customerTable.getModel();
                 int selectedRow = customerTable.getSelectedRow();
@@ -313,6 +345,7 @@ public class BankSystem extends JFrame {
             }
         });
         createCredit.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent arg0) {
                 DefaultTableModel myTableModel = (DefaultTableModel) customerTable.getModel();
                 int selectedRow = customerTable.getSelectedRow();
@@ -334,6 +367,7 @@ public class BankSystem extends JFrame {
             }
         });
         createCustomer.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent arg0) {
                 JTextField firstName = new JTextField();
                 JTextField lastName = new JTextField();
@@ -361,14 +395,11 @@ public class BankSystem extends JFrame {
 
                     }
                 }
-                /*
-                            else{
-                                return new String[]{};
-                            }
-                 */
+                
             }
         });
         deleteCustomer.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent arg0) {
                 DefaultTableModel myTableModel = (DefaultTableModel) customerTable.getModel();
                 int selectedRow = customerTable.getSelectedRow();
@@ -382,6 +413,7 @@ public class BankSystem extends JFrame {
             }
         });
         changeName.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent arg0) {
 
                 int selectedRow = customerTable.getSelectedRow();
@@ -409,8 +441,129 @@ public class BankSystem extends JFrame {
                 }
             }
         });
+        
+        deleteAccount.addActionListener(new ActionListener(){
 
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                DefaultTableModel myAccountTableModel = (DefaultTableModel) accountTable.getModel();
+                int selectedRow = accountTable.getSelectedRow();
+                String help  = (String)chooseCustomer.getSelectedItem();
+                String personalNumber = help.split(" ")[2];
+                
+                if (selectedRow == -1) {
+                    JOptionPane.showMessageDialog(null, "No Customer Selected", "", JOptionPane.PLAIN_MESSAGE);
+                } else {
+                    myBank.closeAccount(personalNumber, Integer.parseInt((String)myAccountTableModel.getValueAt(selectedRow, 0)));
+                    
+                    myAccountTableModel.removeRow(selectedRow);
+                }
+
+            }
+        });
+        
+        getTransactions.addActionListener(new ActionListener(){
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                DefaultTableModel myAccountTableModel = (DefaultTableModel) accountTable.getModel();
+                DefaultListModel myListModel = (DefaultListModel)transactionsList.getModel();
+                int selectedRow = accountTable.getSelectedRow();
+                String help  = (String)chooseCustomer.getSelectedItem();
+                String personalNumber = help.split(" ")[2];
+                
+                if (selectedRow == -1) {
+                    JOptionPane.showMessageDialog(null, "No Account Selected", "", JOptionPane.PLAIN_MESSAGE);
+                } else {
+                    ArrayList<String> madeTransactions = myBank.getTransactions(personalNumber, Integer.parseInt((String)myAccountTableModel.getValueAt(selectedRow, 0)));
+                    if(madeTransactions.isEmpty()){
+                        JOptionPane.showMessageDialog(null, "No Transactions made for current account", "", JOptionPane.PLAIN_MESSAGE);
+                    }
+                    else {
+                        for (String info : madeTransactions){
+                        myListModel.addElement((String)info);
+                        }
+                    }
+                    
+                }
+            }
+        });
+        
+        deposit.addActionListener(new ActionListener(){
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                
+                DefaultTableModel myAccountTableModel = (DefaultTableModel) accountTable.getModel();
+                int selectedRow = accountTable.getSelectedRow();
+                String help  = (String)chooseCustomer.getSelectedItem();
+                String personalNumber = help.split(" ")[2];
+                System.out.println(personalNumber);
+                if (selectedRow == -1) {
+                    JOptionPane.showMessageDialog(null, "No Account Selected", "", JOptionPane.PLAIN_MESSAGE);
+                    return;
+                }
+                int accountID = Integer.parseInt((String)myAccountTableModel.getValueAt(selectedRow, 0));
+                double amountToDeposit = getDepositInput();
+                if(amountToDeposit != -1){
+                    System.out.println(amountToDeposit);
+                    System.out.println(accountID);
+                    myBank.deposit(personalNumber, accountID, amountToDeposit);
+                    myAccountTableModel.removeRow(selectedRow);
+                    String [] accountInfo = myBank.getAccount(personalNumber, accountID).split(" ");
+                    myAccountTableModel.addRow(accountInfo);
+                }
+                
+            }
+            
+        });
+        
+        withdraw.addActionListener(new ActionListener(){
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        });
+    
     }
+    
+    private boolean validateDepositInput(JTextField amount){
+        try{
+            double value = Double.parseDouble(amount.getText());
+            if(Double.compare(value, 0) < 0){
+                return false;
+            }
+            else{
+                return true;
+            }
+        }
+        catch (Exception e){
+            return false;
+        }
+    }
+    
+    private double getDepositInput(){
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        JTextField amount = new JTextField();
+        panel.add(new JLabel("Amount to deposit:"));
+        panel.add(amount);
+        int result = JOptionPane.showConfirmDialog(null, panel, "Make Deposit",
+                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            if(validateDepositInput(amount)){
+                return Double.parseDouble(amount.getText());
+            }
+            else {
+                JOptionPane.showMessageDialog(null, "Invalid amount", "", JOptionPane.WARNING_MESSAGE);
+                return getDepositInput();
+            }
+        }
+        else{
+            return -1;
+        }
+    }
+
 
     private void updateCustomer(String newFirstName, String newLastName, int selectedRow) {
         DefaultTableModel myTableModel = (DefaultTableModel) customerTable.getModel();
