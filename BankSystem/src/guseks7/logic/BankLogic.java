@@ -272,7 +272,7 @@ public class BankLogic {
 	public boolean withdraw(String pNo, int accountId, double amount) {
 		boolean withdrawalDone = false;
 		for(int i = 0; i < myCustomers.size(); i++) {
-			if(myCustomers.get(i).getPersonalNumber() == pNo) {
+			if(myCustomers.get(i).getPersonalNumber().equals(pNo)) {
 				ArrayList<String> help = myCustomers.get(i).getAccountNrs();
 				for(int j = 0; j < help.size(); j++) {
 					if(accountId == Integer.parseInt(help.get(j))){
