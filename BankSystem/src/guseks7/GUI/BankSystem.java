@@ -54,6 +54,8 @@ public class BankSystem extends JFrame {
         setTitle("A digital Bank");
         setVisible(true);
         
+        
+        
     }
 
     private void createControlPanel() {
@@ -68,7 +70,7 @@ public class BankSystem extends JFrame {
         add(inputPanel, inputPanelConfig);
         GridBagConstraints displayPanelConfig = new GridBagConstraints();
         setConstraints(displayPanelConfig, 0, 1, 2, 3, "both", new Insets(0, 0, 0, 0), FIRST_LINE_START, 0.5, 0.5);
-        displayPanel.setPreferredSize(new Dimension(1300, 400));
+        displayPanel.setPreferredSize(new Dimension(1100, 400));
         add(displayPanel, displayPanelConfig);
         /*
         GridBagConstraints bottomPanelConfig = new GridBagConstraints();
@@ -209,8 +211,14 @@ public class BankSystem extends JFrame {
         
         
         JPanel generalDisplayWrapper = new JPanel(new BorderLayout());
+        JScrollPane displayScroll = new JScrollPane(generalDisplay);
+        displayScroll.setPreferredSize(new Dimension(300, 200));
+        //displayScroll.setBounds(2, 2, 300, 200);
+        displayScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        displayScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         
-        generalDisplayWrapper.add(generalDisplay, BorderLayout.CENTER);
+        
+        generalDisplayWrapper.add(displayScroll, BorderLayout.NORTH);
         generalDisplayWrapper.setBorder(new TitledBorder("General Display"));
         
         
@@ -223,9 +231,10 @@ public class BankSystem extends JFrame {
         
         GridBagConstraints generalDisplayWrapperConfig = new GridBagConstraints();
         setConstraints(generalDisplayWrapperConfig, 0, 1, 3, 3, "both", new Insets(5, 0, 0, 0), FIRST_LINE_START, 0.5, 0.5);
-        displayArea.add(new JScrollPane(generalDisplayWrapper, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.NORTH);
         
-        panel.add(displayArea, BorderLayout.EAST);
+        displayArea.add(generalDisplayWrapper, BorderLayout.NORTH);
+        
+        //panel.add(displayArea, BorderLayout.EAST);
         return panel;
     }
 
@@ -350,7 +359,9 @@ public class BankSystem extends JFrame {
         //transactionsList.append("hur mår du\n");
         
         generalDisplay = new JTextArea();
-        generalDisplay.setPreferredSize(new Dimension(300, 250));
+        //generalDisplay.setPreferredSize(new Dimension(300, 200));
+        generalDisplay.setEditable(false);
+        //generalDisplay.setBounds(2, 2, 300, 100);
     }
 
     private void createButtons() {
@@ -543,22 +554,43 @@ public class BankSystem extends JFrame {
                         JOptionPane.showMessageDialog(null, "No Transactions made for current account", "", JOptionPane.PLAIN_MESSAGE);
                     }
                     else {
-                            //myListModel.removeAllElements();
-                            generalDisplay.setText("");
-                            generalDisplay.append("\n");
-                            generalDisplay.append("Made transactions on the selected account\n");
-                            generalDisplay.append("_____________________________________________\n\n");
+                            JPanel panel = new JPanel(new GridBagLayout());
+                            DefaultListModel myModel = new DefaultListModel();
+                            
+                            JList display = new JList(myModel);
+                            
+                            
+                            //display.setPreferredSize(new Dimension(300, 200));
+                            JScrollPane displayScroll = new JScrollPane(display, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                            displayScroll.setPreferredSize(new Dimension(300, 150));
+                            GridBagConstraints labelConfig = new GridBagConstraints();
+                            setConstraints(labelConfig, 0, 0, 1, 1, "both", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+                            panel.add(new JLabel("Made Transactions on selected Account"), labelConfig);
+                            GridBagConstraints displayScrollConfig = new GridBagConstraints();
+                            setConstraints(displayScrollConfig, 0, 1, 1, 1, "both", new Insets(10, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+                            panel.add(displayScroll, displayScrollConfig);
+                            /*
+                            display.setText("");
+                            display.append("\n");
+                            display.append("     Made transactions on the selected account\n");
+                            display.append("_____________________________________________\n\n");
                         for (String transaction : madeTransactions){
                             //System.out.println(info);
                             //myListModel.addRow(info.split(" "));
                             String [] help = transaction.split(" ");
-                           
+                            display.append("    ");
                             for (String info : help){
-                                generalDisplay.append(info + ",  ");
+                                display.append(info + "  ");
                             }
-                            generalDisplay.append("\n");
-                            
+                            display.append("\n\n");
+
                         }
+                            */
+                            myModel.removeAllElements();
+                            for(String transaction : madeTransactions){
+                                myModel.addElement(" " + transaction);
+                            }
+                        JOptionPane.showMessageDialog(null, panel, "Transactions", JOptionPane.INFORMATION_MESSAGE);
                     }
                     
                 }
