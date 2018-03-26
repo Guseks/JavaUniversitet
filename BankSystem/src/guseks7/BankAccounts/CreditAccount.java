@@ -26,8 +26,8 @@ public class CreditAccount extends Account {
 		
 			saldo = saldo - amount;
 			//Create the information about the transaction, then store it
-			Date newDate = new Date();
-			myTransactions.add(dateFormat.format(newDate) + " " + -amount + " " + saldo);
+			
+			myTransactions.add(new Transaction(amount, saldo, "withdraw"));
 			
 			//regulates the interest after the perfomed operation
 			if(saldo < 0) {
@@ -47,7 +47,7 @@ public class CreditAccount extends Account {
 		
 		saldo = saldo + amount;
 		Date newDate = new Date();
-		myTransactions.add(dateFormat.format(newDate) + " " + amount + " " + saldo);
+		myTransactions.add(new Transaction(amount, saldo, "deposit"));
 		//Regulating the interest to the correct value after the operation is performed
 		if(saldo + amount > 0) {
 			interest = 0.5;

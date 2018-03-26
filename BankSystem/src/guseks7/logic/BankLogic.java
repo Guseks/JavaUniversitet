@@ -1,7 +1,7 @@
 package guseks7.logic;
 
 import java.util.*;
-
+import guseks7.BankAccounts.Transaction;
 /**
  * A class that handles the operations of the Bank. This is the interface that the user 
  * of the system uses. Each function signals if the procedure has worked ok. 
@@ -220,8 +220,8 @@ public class BankLogic {
 	 * belonging to the specified customer. Returns the information if the operation is succesful, 
 	 * or null if the account is not found
 	 */
-	public ArrayList<String> getTransactions(String pNo, int accountId){
-		ArrayList<String> temp = new ArrayList<String>();
+	public ArrayList<Transaction> getTransactions(String pNo, int accountId){
+		ArrayList<Transaction> temp = new ArrayList<Transaction>();
 		boolean done = false;
 		for(int i = 0; i < myCustomers.size(); i++) {
 			if(myCustomers.get(i).getPersonalNumber().equals(pNo)) {

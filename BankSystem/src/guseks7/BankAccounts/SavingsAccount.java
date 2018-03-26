@@ -35,7 +35,7 @@ public class SavingsAccount extends Account {
 				saldo = saldo - amount;
 				//Code for generation info about each transaction
 				Date newDate = new Date();
-				myTransactions.add(dateFormat.format(newDate) + " " + -amount + " " + saldo);
+				myTransactions.add(new Transaction(amount, saldo, "withdraw"));
 				firstWithdrawal = false;
 				return true;
 			}
@@ -48,7 +48,7 @@ public class SavingsAccount extends Account {
 			double newAmount = amount + (amount * withdrawalInterest);
 			saldo = saldo - newAmount;
 			Date newDate = new Date();
-			myTransactions.add(dateFormat.format(newDate) + " " + -newAmount + " " + saldo);
+			myTransactions.add(new Transaction(amount, saldo, "withdraw"));
 			return true;
 		}
 		else {
@@ -61,7 +61,7 @@ public class SavingsAccount extends Account {
 	public void deposit(double amount) {
 		saldo = saldo + amount;
 		Date newDate = new Date();
-		myTransactions.add(dateFormat.format(newDate) + " " + amount + " " + saldo);
+		myTransactions.add(new Transaction(amount, saldo, "deposit"));
 	}
 	
 	//Closes the SavingsAccount

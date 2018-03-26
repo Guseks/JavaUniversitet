@@ -136,8 +136,8 @@ public class Customer {
 	 * Retrieves the list of the performed transactions for the specified account
 	 * Return this list of information to be presented by the similar function in BankLogic
 	 */
-	public ArrayList<String> getTransactions(int accountId) {
-		ArrayList<String> help = new ArrayList<String>();
+	public ArrayList<Transaction> getTransactions(int accountId) {
+		ArrayList<Transaction> help = new ArrayList<Transaction>();
 		for(int i = 0; i < myAccounts.size(); i++) {
 			if(myAccounts.get(i).getAccountNumber() == accountId) {
 				help = myAccounts.get(i).getTransactions();

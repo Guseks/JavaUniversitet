@@ -17,6 +17,17 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import guseks7.BankAccounts.Transaction;
+/**
+ * A Class that is responsible for creating a GUI for my Banksystem. 
+ * Contains actionlistener to enable the user to access every functionality in 
+ * the original bankssystem.
+ * @author guseks7
+ * 
+ * Namn: Gustaf Ekström
+ * Ltu-id: guseks-7
+ *
+ */
 
 public class BankSystem extends JFrame {
 
@@ -40,18 +51,23 @@ public class BankSystem extends JFrame {
 
     public BankSystem() {
         myBank = new BankLogic();
-        myBank.createCustomer("Gustaf", "Ekström", "9306025595");
-        myBank.createCustomer("Marcus", "Ekström", "9306026197");
+  
         createControlPanel();
         setSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle("A digital Bank");
         setVisible(true);
+        setLocation(200, 100);
         
         
         
     }
-
+/**
+ * A function that creates a panel that contains everything inside the GUI.
+ * The different components are then places in different subpanels inside 
+ * the big one. Contains calls to similar functions responsible
+ * for each subpanel.
+ */
     private void createControlPanel() {
         JPanel inputPanel = createInputPanel();
         JPanel displayPanel = createDisplayPanel();
@@ -69,13 +85,19 @@ public class BankSystem extends JFrame {
        
     }
     
+    /**
+     * Creates the subpanel containing input operations, and places 
+     * it at the top of the window. Uses a subpanel to wrap all the components
+     * in and the places them inside the bigger panel, called inputPanel
+     * Contains code for creating buttons and their functionality.
+     *  
+     */
     private JPanel createInputPanel() {
         createButtons();
         JPanel panel = new JPanel(new BorderLayout());
       
         JPanel customerOperationsWrapper = new JPanel(new GridBagLayout());
-        JPanel accountOperationsWrapper = new JPanel(new GridBagLayout());
-
+        
         GridBagConstraints createCustomerConfig = new GridBagConstraints();
         setConstraints(createCustomerConfig, 0, 0, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
 
@@ -100,13 +122,18 @@ public class BankSystem extends JFrame {
         setConstraints(customerOperationsWrapperConfig, 0, 0, 1, 1, "None", new Insets(0, 0, 0, 0), FIRST_LINE_START, 0.5, 0.5);
         
         panel.add(customerOperationsWrapper, BorderLayout.WEST);
-
-        GridBagConstraints accountOperationsWrapperConfig = new GridBagConstraints();
-        setConstraints(accountOperationsWrapperConfig, 1, 0, 1, 1, "None", new Insets(0, 20, 0, 0), FIRST_LINE_START, 0.5, 0.5);
         
         return panel;
     }
-
+    
+    /**
+     * Creates the subpanel containing all the components for displaying data
+     * Uses several LayoutManagers to place them inside panels and to place 
+     * them in a appropriate position in the GUI. Uses wrappers to create
+     * borders around groups of components containing instructions 
+     * to the user. 
+     *  
+     */
     private JPanel createDisplayPanel() {
         createDisplay();
         JPanel panel = new JPanel(new BorderLayout());
@@ -165,6 +192,12 @@ public class BankSystem extends JFrame {
         return panel;
     }
 
+    /**
+     *Creates the different components in the display area, except the buttons. 
+     * Inits the JTables with the desired column names and properties. Also adds
+     * a listener responisble for checking when the user selects a customer in
+     * the customer Table, to display the customers accounts
+     */
     private void createDisplay() {
         
         ArrayList<String> myCustomers = myBank.getAllCustomers();
@@ -235,7 +268,10 @@ public class BankSystem extends JFrame {
         });
         
     }
-
+/**
+ * Inits the different buttons in the GUI, sets their name and also specifies 
+ * their desired size. 
+ */
     private void createButtons() {
         createSavings = new JButton("Create new SavingsAccount");
         createCredit = new JButton("Create new CreditAccount");
@@ -260,8 +296,18 @@ public class BankSystem extends JFrame {
        addButtonFunctions();
 
     }
-
+    
+    /**
+     * A help function to make the code more readable. Responsible for adding
+     * all the actionslisteners to the buttons, which implements the desired
+     * functions in the GUI.
+     */
     private void addButtonFunctions(){
+        /**
+         * Gathers the required info to creata a new savingsAccount 
+         * and calls the function in BankLogic to create a new savingsAccount.
+         * Also adds it to the accountTable, to display the created account
+         */
         createSavings.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -281,6 +327,11 @@ public class BankSystem extends JFrame {
 
             }
         });
+        /**
+         * Gathers the required info to creata a new savingsAccount 
+         * and calls the function in BankLogic to create a new savingsAccount.
+         * Also adds it to the accountTable, to display the created account
+         */
         createCredit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -299,6 +350,11 @@ public class BankSystem extends JFrame {
                 
             }
         });
+        /**
+         * Opens a separate window, where the user is asked to provide the new 
+         * data for the customer that they wish to create. All variables used
+         * are created locally.
+         */
         createCustomer.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -322,8 +378,8 @@ public class BankSystem extends JFrame {
                     customerData[2] = personalNumber.getText();
                     if (!customerData[0].isEmpty() && !customerData[1].isEmpty() && !customerData[2].isEmpty()) {
                         myBank.createCustomer(customerData[0], customerData[1], customerData[2]);
-                        DefaultTableModel myTableModel = (DefaultTableModel) customerTable.getModel();
-                        myTableModel.addRow(customerData);
+                        ((DefaultTableModel) customerTable.getModel()).addRow(customerData);
+                        
                     } else {
                         JOptionPane.showMessageDialog(null, "Invalid Data", "", JOptionPane.WARNING_MESSAGE);
 
@@ -332,6 +388,12 @@ public class BankSystem extends JFrame {
                 
             }
         });
+        /**
+         * Functionality for deleting the selected customer from the system, 
+         * and the tables displaying the customers data. If the customer has 
+         * any accounts in the bank when deleted these are displayed and the 
+         * resulting interest is displayed in a separate window.
+         */
         deleteCustomer.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -358,8 +420,8 @@ public class BankSystem extends JFrame {
                         myModel.addColumn("Account ID");
                         myModel.addColumn("Saldo");
                         myModel.addColumn("Account Type");
+                        myModel.addColumn("Interest rate");
                         myModel.addColumn("Interest");
-                        myModel.addColumn("Result");
 
 
                         JTable display = new JTable(myModel);
@@ -372,7 +434,7 @@ public class BankSystem extends JFrame {
                         setConstraints(labelConfig, 0, 1, 1, 1, "both", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
                         
                         panel.add(new JLabel("Deleted Customer: " + myBank.getCustomer(personalNumberSelected).get(0)));
-                        panel.add(new JLabel("The following accounts was deleted"), labelConfig);
+                        panel.add(new JLabel("The following accounts were deleted"), labelConfig);
                         GridBagConstraints displayScrollConfig = new GridBagConstraints();
                         setConstraints(displayScrollConfig, 0, 2, 1, 1, "both", new Insets(10, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
                         panel.add(displayScroll, displayScrollConfig);
@@ -384,14 +446,17 @@ public class BankSystem extends JFrame {
                         if(!accountNumbers.isEmpty()){
                             ArrayList<String> help = new ArrayList<String>();
                             for (String number : accountNumbers){
-                                help.add(myBank.getAccount(personalNumberSelected, Integer.parseInt(number)));
+                                help.add(myBank.closeAccount(personalNumberSelected, Integer.parseInt(number)));
                             }
                             for(String info : help){
                                 myModel.addRow(info.split(" "));
                             }
                           
                         }
-                        JOptionPane.showMessageDialog(null, panel, "Accounts Deleted", JOptionPane.INFORMATION_MESSAGE);
+                        if(!accountNumbers.isEmpty()){
+                            JOptionPane.showMessageDialog(null, panel, "Accounts Deleted", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                        
                         myBank.deleteCustomer((String) myCustomerTableModel.getValueAt(selectedRow, 2));
                         
                         while (accountTable.getRowCount()> 0){
@@ -407,6 +472,11 @@ public class BankSystem extends JFrame {
                 }
             }
         });
+        /**
+         * Changes the name of the selected customer, by opening a separate
+         * window which promts the user for the new name of the customer. Then 
+         * calls a help function to perform the operation.
+         */
         changeName.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -437,6 +507,11 @@ public class BankSystem extends JFrame {
             }
         });
         
+        /**
+         * Deletes the selected account from the currently selected customer. 
+         * Displays the deleted account in a separate window, providing all the
+         * information required about the deleted account.
+         */
         deleteAccount.addActionListener(new ActionListener(){
 
             @Override
@@ -463,8 +538,8 @@ public class BankSystem extends JFrame {
                     myModel.addColumn("Account ID");
                     myModel.addColumn("Saldo");
                     myModel.addColumn("Account Type");
+                    myModel.addColumn("Interest rate");
                     myModel.addColumn("Interest");
-                    myModel.addColumn("Result");
                     
                     
                     JTable display = new JTable(myModel);
@@ -473,15 +548,15 @@ public class BankSystem extends JFrame {
                     displayScroll.setPreferredSize(new Dimension(400, 50));
                     GridBagConstraints labelConfig = new GridBagConstraints();
                     setConstraints(labelConfig, 0, 0, 1, 1, "both", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
-                    panel.add(new JLabel("The following account was deleted"), labelConfig);
+                    panel.add(new JLabel("The following account were deleted"), labelConfig);
                     GridBagConstraints displayScrollConfig = new GridBagConstraints();
                     setConstraints(displayScrollConfig, 0, 1, 1, 1, "both", new Insets(10, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
                     panel.add(displayScroll, displayScrollConfig);
                            
                     display.removeAll();
                     
-                    myModel.addRow(myBank.getAccount(personalNumberSelected, accountID).split(" "));
-                    System.out.println(myBank.getCustomer(personalNumberSelected));
+                    myModel.addRow(myBank.closeAccount(personalNumberSelected, accountID).split(" "));
+                 
                     myAccountTableModel.removeRow(selectedRow);
                     accountTable.repaint();
                     JOptionPane.showMessageDialog(null, panel, "Account Deleted", JOptionPane.INFORMATION_MESSAGE);
@@ -490,6 +565,12 @@ public class BankSystem extends JFrame {
             }
         });
         
+        /**
+         * Responsible for getting and displaying the performed
+         * transactions on the selected account belonging to the selected
+         * Customer to the user. Creates a new simple separate window to 
+         * display the information inside a table.
+         */
         getTransactions.addActionListener(new ActionListener(){
 
             @Override
@@ -505,7 +586,7 @@ public class BankSystem extends JFrame {
                 if (selectedRow == -1) {
                     JOptionPane.showMessageDialog(null, "No Account Selected", "", JOptionPane.PLAIN_MESSAGE);
                 } else {
-                    ArrayList<String> madeTransactions = myBank.getTransactions(personalNumberSelected, accountID);
+                    ArrayList<Transaction> madeTransactions = myBank.getTransactions(personalNumberSelected, accountID);
                     
                     if(madeTransactions.isEmpty()){
                         JOptionPane.showMessageDialog(null, "No Transactions made for current account", "", JOptionPane.PLAIN_MESSAGE);
@@ -526,8 +607,8 @@ public class BankSystem extends JFrame {
                             panel.add(displayScroll, displayScrollConfig);
                            
                             myModel.removeAllElements();
-                            for(String transaction : madeTransactions){
-                                myModel.addElement(" " + transaction);
+                            for(Transaction t : madeTransactions){
+                                myModel.addElement(" " + t);
                             }
                         JOptionPane.showMessageDialog(null, panel, "Transactions", JOptionPane.INFORMATION_MESSAGE);
                     }
@@ -536,6 +617,11 @@ public class BankSystem extends JFrame {
             }
         });
         
+        /**
+         * Responsible for performing the required operations 
+         * connected with depositing money into a account. Checks to see which
+         * customer and which account is selected
+         */
         deposit.addActionListener(new ActionListener(){
 
             @Override
@@ -554,6 +640,8 @@ public class BankSystem extends JFrame {
                 }
                 int accountID = Integer.parseInt((String)myAccountTableModel.getValueAt(selectedRow, 0));
                 double amount = getInput("deposit");
+                // If the provided input is ok, performs the deposit and changes
+                //the information in the table
                 if(amount != -1){
                    
                     myBank.deposit(personalNumberSelected, accountID, amount);
@@ -566,6 +654,13 @@ public class BankSystem extends JFrame {
             
         });
         
+        /**
+         * Contains the functionality required to perform withdrawals from 
+         * a specified account. Similar structure to the function for deposit
+         * with the addition of code responsible to make sure the withdrawal is 
+         * possible. If the input is wrong in any way, the user is informed and
+         * asked for a new input
+         */
         withdraw.addActionListener(new ActionListener(){
 
             @Override
@@ -610,6 +705,13 @@ public class BankSystem extends JFrame {
     
     }
     
+    /**
+     * 
+     * a help function to make sure the given input when making a deposit or 
+     * withdrawal is a suitable type, a input of type double.
+     */
+    
+    
     private boolean validateInput(JTextField amount){
         try{
             double value = Double.parseDouble(amount.getText());
@@ -625,6 +727,14 @@ public class BankSystem extends JFrame {
         }
     }
     
+    /**
+     * Another helpfunction responsible for displaying and getting the input
+     * when the user wants to do a deposit or a withdrawal. uses the function
+     * validateInput, if the value provided is not suitable, informs the user
+     * and ask the user for a new value by a recursive call to the function
+     * itself.
+     *  
+     */
     private double getInput(String type){
         String label;
         String title;
@@ -661,6 +771,13 @@ public class BankSystem extends JFrame {
         }
     }
     
+    /**
+     * A function responsible for updating the information about a customer
+     * when the user wants to change the name of a customer. Both inside the 
+     * structures storing the data about the customer but also in the table that 
+     * displays the data about the customers.
+     *  
+     */
     private void updateCustomer(String newFirstName, String newLastName, int selectedRow) {
         DefaultTableModel myTableModel = (DefaultTableModel) customerTable.getModel();
         if (!newFirstName.isEmpty() && !newLastName.isEmpty()) {
@@ -670,6 +787,13 @@ public class BankSystem extends JFrame {
         }
     }
 
+    /**
+     * A function that is used to make the code more readible by creating 
+     * some abstraction. The function handles specifying the constraints for
+     * each component that is placed inside a panel using the GridBagLayout
+     * manager
+     *
+     */
     private void setConstraints(GridBagConstraints c, int gridx, int gridy, int gridwidth, int gridheight, String fillConfig, Insets padding, int pos, double weightx, double weighty) {
         c.gridx = gridx;
         c.gridy = gridy;
@@ -723,7 +847,11 @@ public class BankSystem extends JFrame {
         }
     }
 
-   
+   /**
+    * The main function, creates a new instance of my GUI and runs it until
+    * the user choses to close the program
+    *  
+    */
     public static void main(String[] args) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {

@@ -21,7 +21,7 @@ public abstract class Account {
 	protected double interest;
 	protected int AccountNumber;
 	protected String AccountType;
-	protected ArrayList<String> myTransactions = new ArrayList<String>();
+	protected ArrayList<Transaction> myTransactions = new ArrayList<Transaction>();
 	protected SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	public Account(double newSaldo, int newAccountNumber, String newAccountType){
@@ -56,7 +56,7 @@ public abstract class Account {
 			return saldo*interest/100;
 		}
 		
-		public ArrayList<String> getTransactions() {
+		public ArrayList<Transaction> getTransactions() {
 			return myTransactions;			
 		}
 		
