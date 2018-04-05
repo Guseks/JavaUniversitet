@@ -65,7 +65,12 @@ public class BankSystem extends JFrame {
         
         
     }
-    
+    /**
+     * Creates a menu for the program and places it at the top of the window.
+     * The menu contains a exit button and other common functions such as 
+     * save and load from file. File management is not yet implemented, but 
+     * it shows how the menu can be used to add additional functions.
+     */
     private void createMenu(){
         myMenu = new JMenu("File");
         myMenuBar = new JMenuBar();
