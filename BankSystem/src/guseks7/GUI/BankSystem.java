@@ -18,6 +18,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import guseks7.BankAccounts.Transaction;
+import java.awt.FlowLayout;
 /**
  * A Class that is responsible for creating a GUI for my Banksystem. 
  * Contains actionlistener to enable the user to access every functionality in 
@@ -47,11 +48,13 @@ public class BankSystem extends JFrame {
 
     private JTable customerTable;
     private JTable accountTable;
+    private JMenu myMenu;
+    private JMenuBar myMenuBar;
     private String personalNumberSelected;
 
     public BankSystem() {
         myBank = new BankLogic();
-  
+        createMenu();
         createControlPanel();
         setSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -62,6 +65,31 @@ public class BankSystem extends JFrame {
         
         
     }
+    
+    private void createMenu(){
+        myMenu = new JMenu("File");
+        myMenuBar = new JMenuBar();
+        
+        myMenuBar.setPreferredSize(new Dimension(100, 25));
+        JMenuItem exitItem = new JMenuItem("Exit");
+        exitItem.setPreferredSize(new Dimension(50,20));
+       
+        exitItem.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                dispose();
+            }
+        });
+        JMenuItem saveToFile = new JMenuItem("Save to file");
+        JMenuItem loadFromFile = new JMenuItem("Load data from file");
+        myMenu.add(saveToFile);
+        myMenu.add(loadFromFile);
+        myMenu.add(exitItem);
+        
+        myMenuBar.add(myMenu, BorderLayout.CENTER);
+        setJMenuBar(myMenuBar);
+    }
+    
 /**
  * A function that creates a panel that contains everything inside the GUI.
  * The different components are then places in different subpanels inside 
