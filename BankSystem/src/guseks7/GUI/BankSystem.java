@@ -438,69 +438,62 @@ public class BankSystem extends JFrame {
                 } else {
                      personalNumberSelected = (String)myCustomerTableModel.getValueAt(selectedRow, 2);
                 
-                    if (selectedRow == -1) {
-                        JOptionPane.showMessageDialog(null, "No Account Selected", "", JOptionPane.PLAIN_MESSAGE);
-                    } else {
-                        
-                        JPanel panel = new JPanel(new GridBagLayout());
-                        DefaultTableModel myModel = new DefaultTableModel(){
-                            @Override
-                            public boolean isCellEditable(int row, int column) {
-                                //all cells false
-                                return false;
-                            }
-                        };
-                        myModel.addColumn("Account ID");
-                        myModel.addColumn("Saldo");
-                        myModel.addColumn("Account Type");
-                        myModel.addColumn("Interest rate");
-                        myModel.addColumn("Interest");
-
-
-                        JTable display = new JTable(myModel);
-
-                        JScrollPane displayScroll = new JScrollPane(display);
-                        displayScroll.setPreferredSize(new Dimension(400, 100));
-                        GridBagConstraints customerLabelConfig = new GridBagConstraints();
-                        setConstraints(customerLabelConfig, 0, 0, 1, 1, "both", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
-                        GridBagConstraints labelConfig = new GridBagConstraints();
-                        setConstraints(labelConfig, 0, 1, 1, 1, "both", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
-                        
-                        panel.add(new JLabel("Deleted Customer: " + myBank.getCustomer(personalNumberSelected).get(0)));
-                        panel.add(new JLabel("The following accounts were deleted"), labelConfig);
-                        GridBagConstraints displayScrollConfig = new GridBagConstraints();
-                        setConstraints(displayScrollConfig, 0, 2, 1, 1, "both", new Insets(10, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
-                        panel.add(displayScroll, displayScrollConfig);
-
-                        display.removeAll();
-                       
-                        
-                        ArrayList<String> accountNumbers = myBank.getAccountNrs(personalNumberSelected);
-                        if(!accountNumbers.isEmpty()){
-                            ArrayList<String> help = new ArrayList<String>();
-                            for (String number : accountNumbers){
-                                help.add(myBank.closeAccount(personalNumberSelected, Integer.parseInt(number)));
-                            }
-                            for(String info : help){
-                                myModel.addRow(info.split(" "));
-                            }
-                          
+                    JPanel panel = new JPanel(new GridBagLayout());
+                    DefaultTableModel myModel = new DefaultTableModel(){
+                        @Override
+                        public boolean isCellEditable(int row, int column) {
+                            //all cells false
+                            return false;
                         }
-                        if(!accountNumbers.isEmpty()){
-                            JOptionPane.showMessageDialog(null, panel, "Accounts Deleted", JOptionPane.INFORMATION_MESSAGE);
+                    };
+                    myModel.addColumn("Account ID");
+                    myModel.addColumn("Saldo");
+                    myModel.addColumn("Account Type");
+                    myModel.addColumn("Interest rate");
+                    myModel.addColumn("Interest");
+
+
+                    JTable display = new JTable(myModel);
+
+                    JScrollPane displayScroll = new JScrollPane(display);
+                    displayScroll.setPreferredSize(new Dimension(400, 100));
+                    GridBagConstraints customerLabelConfig = new GridBagConstraints();
+                    setConstraints(customerLabelConfig, 0, 0, 1, 1, "both", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+                    GridBagConstraints labelConfig = new GridBagConstraints();
+                    setConstraints(labelConfig, 0, 1, 1, 1, "both", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+
+                    panel.add(new JLabel("Deleted Customer: " + myBank.getCustomer(personalNumberSelected).get(0)));
+                    panel.add(new JLabel("The following accounts were deleted"), labelConfig);
+                    GridBagConstraints displayScrollConfig = new GridBagConstraints();
+                    setConstraints(displayScrollConfig, 0, 2, 1, 1, "both", new Insets(10, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+                    panel.add(displayScroll, displayScrollConfig);
+
+                    display.removeAll();
+
+
+                    ArrayList<String> accountNumbers = myBank.getAccountNrs(personalNumberSelected);
+                    if(!accountNumbers.isEmpty()){
+                        ArrayList<String> help = new ArrayList<String>();
+                        for (String number : accountNumbers){
+                            help.add(myBank.closeAccount(personalNumberSelected, Integer.parseInt(number)));
                         }
-                        
-                        myBank.deleteCustomer((String) myCustomerTableModel.getValueAt(selectedRow, 2));
-                        
-                        while (accountTable.getRowCount()> 0){
-                            ((DefaultTableModel)accountTable.getModel()).removeRow(0);
+                        for(String info : help){
+                            myModel.addRow(info.split(" "));
                         }
-                        myCustomerTableModel.removeRow(selectedRow);
-                        accountTable.repaint();
-                        customerTable.repaint();
-                        
 
                     }
+                    if(!accountNumbers.isEmpty()){
+                        JOptionPane.showMessageDialog(null, panel, "Accounts Deleted", JOptionPane.INFORMATION_MESSAGE);
+                    }
+
+                    myBank.deleteCustomer((String) myCustomerTableModel.getValueAt(selectedRow, 2));
+
+                    while (accountTable.getRowCount()> 0){
+                        ((DefaultTableModel)accountTable.getModel()).removeRow(0);
+                    }
+                    myCustomerTableModel.removeRow(selectedRow);
+                    accountTable.repaint();
+                    customerTable.repaint();
 
                 }
             }
