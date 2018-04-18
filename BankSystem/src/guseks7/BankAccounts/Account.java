@@ -1,4 +1,5 @@
 package guseks7.BankAccounts;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -14,7 +15,7 @@ import java.util.*;
  * Ltu-id: guseks-7
  */
 
-public abstract class Account {
+public abstract class Account implements Serializable{
 	
 	//The variables for an account, Shared for all account types.
 	protected double saldo;

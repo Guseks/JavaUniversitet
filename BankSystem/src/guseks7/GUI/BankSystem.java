@@ -18,7 +18,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import guseks7.BankAccounts.Transaction;
-import java.awt.FlowLayout;
+import java.io.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 /**
  * A Class that is responsible for creating a GUI for my Banksystem. 
  * Contains actionlistener to enable the user to access every functionality in 
@@ -87,6 +88,20 @@ public class BankSystem extends JFrame {
         });
         JMenuItem saveToFile = new JMenuItem("Save to file");
         JMenuItem loadFromFile = new JMenuItem("Load data from file");
+        saveToFile.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                saveToFileFunction();
+            }
+        });
+        
+        loadFromFile.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                loadFromFileFunction();
+            }
+            
+        });
         myMenu.add(saveToFile);
         myMenu.add(loadFromFile);
         myMenu.add(exitItem);
@@ -95,6 +110,89 @@ public class BankSystem extends JFrame {
         setJMenuBar(myMenuBar);
     }
     
+    private void saveToFileFunction(){
+        JFileChooser chooser = new JFileChooser();
+        chooser.setCurrentDirectory(new File("C:\\\\Users\\\\Gustaf\\\\Documents\\\\NetBeansProjects\\\\JavaUniversitet\\\\BankSystem\\\\Saved Data"));
+        chooser.setFileFilter(new FileNameExtensionFilter("Text Files", "txt"));
+
+        int retrival = chooser.showSaveDialog(null);
+        if (retrival == JFileChooser.APPROVE_OPTION) {
+            try {
+                ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(chooser.getSelectedFile()));
+                out.writeObject(myBank);
+                out.writeInt(myBank.getLastAssigned());
+                out.close();
+            } 
+            catch (FileNotFoundException e){
+                JOptionPane.showMessageDialog(null, e.getMessage(), "", JOptionPane.WARNING_MESSAGE);
+                saveToFileFunction();
+            }
+            catch(IOException e){
+                e.getMessage();
+            }
+            catch (Exception e) {
+                e.getMessage();
+                
+            }
+        } 
+    }
+    
+/* "C:\\Users\\Gustaf\\Documents\\NetBeansProjects\\JavaUniversitet\\BankSystem\\Saved Data" */
+    
+    private void loadFromFileFunction(){
+        JFileChooser chooser = new JFileChooser();
+        chooser.setCurrentDirectory(new File("C:\\\\Users\\\\Gustaf\\\\Documents\\\\NetBeansProjects\\\\JavaUniversitet\\\\BankSystem\\\\Saved Data"));
+        chooser.setFileFilter(new FileNameExtensionFilter("Text Files", "txt"));
+        
+
+        int retrival = chooser.showOpenDialog(null);
+        if (retrival == JFileChooser.APPROVE_OPTION) {
+            try {
+                ObjectInputStream in = new ObjectInputStream(new FileInputStream(chooser.getSelectedFile()));
+                
+                myBank = (BankLogic)in.readObject();
+                myBank.setLastAssigned(in.readInt());
+                updateDisplay();
+                in.close();
+            } 
+            catch (FileNotFoundException e){
+                JOptionPane.showMessageDialog(null, e.getMessage(), "", JOptionPane.WARNING_MESSAGE);
+                loadFromFileFunction();
+            }
+            catch(IOException e){
+                e.getMessage();
+            }
+            catch (Exception ex) {
+                ex.getMessage();
+                
+            }
+        } 
+    }
+    
+    
+    private void updateDisplay(){
+        DefaultTableModel myCustomerTableModel = (DefaultTableModel)customerTable.getModel();
+        ArrayList<String> myCustomers = myBank.getAllCustomers();
+        for(int i = 0; i < myCustomerTableModel.getRowCount(); i++){
+            myCustomerTableModel.removeRow(i);
+        }
+        
+        for (String info : myCustomers) {
+            String[] temp = info.split(" ");
+            myCustomerTableModel.addRow(temp);
+        }
+        DefaultTableModel myAccountTableModel = (DefaultTableModel)accountTable.getModel();
+        for (int j = 0; j < myAccountTableModel.getRowCount(); j++){
+            myAccountTableModel.removeRow(j);
+        }
+        for(int i = 0; i<myCustomerTableModel.getRowCount(); i++){
+            ArrayList<String> accountNrs = myBank.getAccountNrs((String)myCustomerTableModel.getValueAt(i, 2));
+            for (String accountID : accountNrs){
+                myAccountTableModel.addRow(myBank.getAccount(personalNumberSelected, Integer.parseInt(accountID)).split(" "));
+            }
+            
+        }
+    }
 /**
  * A function that creates a panel that contains everything inside the GUI.
  * The different components are then places in different subpanels inside 

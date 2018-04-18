@@ -2,6 +2,7 @@ package guseks7.logic;
 
 import java.util.*;
 import guseks7.BankAccounts.Transaction;
+import java.io.Serializable;
 /**
  * A class that handles the operations of the Bank. This is the interface that the user 
  * of the system uses. Each function signals if the procedure has worked ok. 
@@ -12,7 +13,7 @@ import guseks7.BankAccounts.Transaction;
  *
  */
 
-public class BankLogic {
+public class BankLogic implements Serializable {
 	private ArrayList<Customer> myCustomers = new ArrayList<Customer>();
 	private static int lastAssignedNumber = 1000;
 
@@ -285,6 +286,13 @@ public class BankLogic {
 		}
             return withdrawalDone;
 	}
+        
+        public void setLastAssigned(int newValue){
+            lastAssignedNumber = newValue;
+        }
+        public int getLastAssigned(){
+            return lastAssignedNumber;
+        }
 	
 	/*
 	 * Closes the specified account, if it exists and belongs to the specified customer.

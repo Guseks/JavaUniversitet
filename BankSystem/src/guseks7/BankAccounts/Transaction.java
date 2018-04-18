@@ -5,6 +5,7 @@
  */
 package guseks7.BankAccounts;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -12,7 +13,7 @@ import java.util.Date;
  *
  * @author Gustaf
  */
-public class Transaction {
+public class Transaction implements Serializable{
     private String myType;
     private double myAmount;
     private double mySaldo;

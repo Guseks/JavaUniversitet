@@ -2,6 +2,7 @@ package guseks7.logic;
 
 import java.util.*;
 import guseks7.BankAccounts.*;
+import java.io.Serializable;
 
 /**
  * A class that handles the customers of the bank. Stores their information about their accounts
@@ -15,7 +16,7 @@ import guseks7.BankAccounts.*;
  * Ltu-id: guseks-7
  *
  */
-public class Customer {
+public class Customer implements Serializable{
 	private String firstName;
 	private String SurName;
 	private String personalNumber;

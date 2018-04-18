@@ -1,5 +1,6 @@
 package guseks7.BankAccounts;
 
+import java.io.Serializable;
 import java.util.*;
 /**
  * This class handles Savings accounts and the functions associated with a Savings account
@@ -13,7 +14,7 @@ import java.util.*;
  * Ltu-id: guseks-7
  */
 
-public class SavingsAccount extends Account {
+public class SavingsAccount extends Account implements Serializable {
 	//Variables to control the interest regarding withdrawal of money
 	private boolean firstWithdrawal;
 	private double withdrawalInterest;

@@ -1,5 +1,6 @@
 package guseks7.BankAccounts;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -14,7 +15,7 @@ import java.util.Date;
  * Ltu-id: guseks-7
  */
 
-public class CreditAccount extends Account {
+public class CreditAccount extends Account implements Serializable {
 	public CreditAccount(double newSaldo, int newAccountNumber, String newAccountType){
 		super(newSaldo, newAccountNumber, newAccountType);
 		interest = 0.5;
