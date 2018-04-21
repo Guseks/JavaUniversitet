@@ -112,8 +112,8 @@ public class BankSystem extends JFrame {
     
     private void saveToFileFunction(){
         JFileChooser chooser = new JFileChooser();
-        chooser.setCurrentDirectory(new File("C:\\\\Users\\\\Gustaf\\\\Documents\\\\NetBeansProjects\\\\JavaUniversitet\\\\BankSystem\\\\Saved Data"));
-        chooser.setFileFilter(new FileNameExtensionFilter("Text Files", "txt"));
+        chooser.setCurrentDirectory(new File("guseks7_Files"));
+        
 
         int retrival = chooser.showSaveDialog(null);
         if (retrival == JFileChooser.APPROVE_OPTION) {
@@ -141,8 +141,8 @@ public class BankSystem extends JFrame {
     
     private void loadFromFileFunction(){
         JFileChooser chooser = new JFileChooser();
-        chooser.setCurrentDirectory(new File("C:\\\\Users\\\\Gustaf\\\\Documents\\\\NetBeansProjects\\\\JavaUniversitet\\\\BankSystem\\\\Saved Data"));
-        chooser.setFileFilter(new FileNameExtensionFilter("Text Files", "txt"));
+        chooser.setCurrentDirectory(new File("guseks7_Files"));
+        
         
 
         int retrival = chooser.showOpenDialog(null);
