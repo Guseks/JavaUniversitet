@@ -19,7 +19,8 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import guseks7.BankAccounts.Transaction;
 import java.io.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 /**
  * A Class that is responsible for creating a GUI for my Banksystem. 
  * Contains actionlistener to enable the user to access every functionality in 
@@ -46,6 +47,7 @@ public class BankSystem extends JFrame {
     private JButton getTransactions;
     private JButton deposit;
     private JButton withdraw;
+    private JButton printAccount;
 
     private JTable customerTable;
     private JTable accountTable;
@@ -88,6 +90,7 @@ public class BankSystem extends JFrame {
         });
         JMenuItem saveToFile = new JMenuItem("Save to file");
         JMenuItem loadFromFile = new JMenuItem("Load data from file");
+        
         saveToFile.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -102,9 +105,12 @@ public class BankSystem extends JFrame {
             }
             
         });
+        
         myMenu.add(saveToFile);
         myMenu.add(loadFromFile);
+        
         myMenu.add(exitItem);
+        
         
         myMenuBar.add(myMenu, BorderLayout.CENTER);
         setJMenuBar(myMenuBar);
@@ -137,7 +143,7 @@ public class BankSystem extends JFrame {
         } 
     }
     
-/* "C:\\Users\\Gustaf\\Documents\\NetBeansProjects\\JavaUniversitet\\BankSystem\\Saved Data" */
+
     
     private void loadFromFileFunction(){
         JFileChooser chooser = new JFileChooser();
@@ -168,6 +174,7 @@ public class BankSystem extends JFrame {
             }
         } 
     }
+    
     
     
     private void updateDisplay(){
@@ -242,12 +249,15 @@ public class BankSystem extends JFrame {
         setConstraints(createSavingsConfig, 0, 1, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
         GridBagConstraints createCreditConfig = new GridBagConstraints();
         setConstraints(createCreditConfig, 1, 1, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+        GridBagConstraints printAccountConfig = new GridBagConstraints();
+        setConstraints(printAccountConfig, 2, 1, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
 
         customerOperationsWrapper.add(createCustomer, createCustomerConfig);
         customerOperationsWrapper.add(deleteCustomer, deleteCustomerConfig);
         customerOperationsWrapper.add(changeName, changeNameConfig);
         customerOperationsWrapper.add(createSavings, createSavingsConfig);
         customerOperationsWrapper.add(createCredit, createCreditConfig);
+        customerOperationsWrapper.add(printAccount, printAccountConfig);
 
         GridBagConstraints customerOperationsWrapperConfig = new GridBagConstraints();
         setConstraints(customerOperationsWrapperConfig, 0, 0, 1, 1, "None", new Insets(0, 0, 0, 0), FIRST_LINE_START, 0.5, 0.5);
@@ -413,6 +423,7 @@ public class BankSystem extends JFrame {
         withdraw = new JButton("Make withdrawal");
         getTransactions = new JButton("Get Transactions");
         deleteAccount = new JButton("Delete account");
+        printAccount = new JButton("Print Account History");
 
         createCustomer.setPreferredSize(new Dimension(200, 30));
         deleteCustomer.setPreferredSize(new Dimension(200, 30));
@@ -423,6 +434,7 @@ public class BankSystem extends JFrame {
         getTransactions.setPreferredSize(new Dimension(200, 30));
         deposit.setPreferredSize(new Dimension(200, 30));
         withdraw.setPreferredSize(new Dimension(200, 30));
+        printAccount.setPreferredSize(new Dimension(200, 30));
         
        addButtonFunctions();
 
@@ -826,7 +838,70 @@ public class BankSystem extends JFrame {
                 
             }
         });
+        
+        printAccount.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                DefaultTableModel myCustomerTableModel = (DefaultTableModel) customerTable.getModel();
+                DefaultTableModel myAccountTableModel = (DefaultTableModel) accountTable.getModel();
+                int selectedCustomer = customerTable.getSelectedRow();
+                int selectedAccount = accountTable.getSelectedRow();
+                if(selectedCustomer == -1 ){
+                    JOptionPane.showMessageDialog(null, "No Customer Selected", "", JOptionPane.PLAIN_MESSAGE);
+                    return;
+                }
+                else {
+                    personalNumberSelected = (String)myCustomerTableModel.getValueAt(selectedCustomer, 2);
+                }
+                if(selectedAccount == -1) {
+                    JOptionPane.showMessageDialog(null, "No Account Selected", "", JOptionPane.PLAIN_MESSAGE);
+                    return;
+                }
+                int accountID = Integer.parseInt((String)myAccountTableModel.getValueAt(selectedAccount, 0));
+                double saldo = Double.parseDouble((String)myAccountTableModel.getValueAt(selectedAccount, 1));
+                ArrayList<Transaction> transactions = myBank.getTransactions(personalNumberSelected, accountID);
+                printAccountHistory(saldo, transactions, personalNumberSelected, accountID);
+            }
+            
+        });
     
+    }
+    
+    
+    private void printAccountHistory(double saldo, ArrayList<Transaction> myTransactions, String personalNumber, int accountID){
+        
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        
+            try {
+                File file = new File ("guseks7_Files\\" + personalNumber + "_" + accountID + ".txt");
+                BufferedWriter out = new BufferedWriter(new FileWriter(file));
+                out.write("Dagens Datum: " + dateFormat.format(new Date()));
+                out.newLine();
+                out.newLine();
+                
+                out.write("Utförda Transaktioner: ");
+                out.newLine();
+                
+                for(Transaction info : myTransactions){
+                    out.write(info.toString());
+                    out.newLine();
+                }
+                out.newLine();
+                out.write("Aktuellt Saldo på konto: ");
+                out.write(String.valueOf(saldo));
+                out.close();
+                JOptionPane.showMessageDialog(null, "Account History printed to File!", "", JOptionPane.INFORMATION_MESSAGE);
+                
+            } 
+            catch (FileNotFoundException e){
+                JOptionPane.showMessageDialog(null, e.getMessage(), "", JOptionPane.WARNING_MESSAGE);
+            }
+            
+            catch (Exception ex) {
+                ex.getMessage();
+                
+            }
+        
     }
     
     /**
