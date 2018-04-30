@@ -21,6 +21,7 @@ import guseks7.BankAccounts.Transaction;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javax.swing.filechooser.FileNameExtensionFilter;
 /**
  * A Class that is responsible for creating a GUI for my Banksystem. 
  * Contains actionlistener to enable the user to access every functionality in 
@@ -48,6 +49,7 @@ public class BankSystem extends JFrame {
     private JButton deposit;
     private JButton withdraw;
     private JButton printAccount;
+    private JButton openSavedTransaction;
 
     private JTable customerTable;
     private JTable accountTable;
@@ -71,8 +73,8 @@ public class BankSystem extends JFrame {
     /**
      * Creates a menu for the program and places it at the top of the window.
      * The menu contains a exit button and other common functions such as 
-     * save and load from file. File management is not yet implemented, but 
-     * it shows how the menu can be used to add additional functions.
+     * save and load from file. Also contains calls to functions that handle the
+     * file management and enables the saving and loading of bank information.
      */
     private void createMenu(){
         myMenu = new JMenu("File");
@@ -116,6 +118,10 @@ public class BankSystem extends JFrame {
         setJMenuBar(myMenuBar);
     }
     
+    /**
+     * A function responsible for saving the current Bank and its data to a file.
+     * Handles exceptions that can occur to give stability to the program.
+     */
     private void saveToFileFunction(){
         JFileChooser chooser = new JFileChooser();
         chooser.setCurrentDirectory(new File("guseks7_Files"));
@@ -144,7 +150,12 @@ public class BankSystem extends JFrame {
     }
     
 
-    
+    /**
+     * lets the user specify a file to load data from, then replaces the current
+     * bank, with the neewly loaded one. Then updates the interface.
+     * Handles the possible exceptions that
+     * can occur to make sure the program runs without crashing.
+     */
     private void loadFromFileFunction(){
         JFileChooser chooser = new JFileChooser();
         chooser.setCurrentDirectory(new File("guseks7_Files"));
@@ -176,7 +187,12 @@ public class BankSystem extends JFrame {
     }
     
     
-    
+    /**
+     * Updates the display, in other words the tables located in the display. 
+     * Used when loading new data in to the bank, from a external source to make
+     * the interface displays the correct information currently inside the 
+     * banksystem.
+     */
     private void updateDisplay(){
         DefaultTableModel myCustomerTableModel = (DefaultTableModel)customerTable.getModel();
         ArrayList<String> myCustomers = myBank.getAllCustomers();
@@ -249,15 +265,14 @@ public class BankSystem extends JFrame {
         setConstraints(createSavingsConfig, 0, 1, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
         GridBagConstraints createCreditConfig = new GridBagConstraints();
         setConstraints(createCreditConfig, 1, 1, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
-        GridBagConstraints printAccountConfig = new GridBagConstraints();
-        setConstraints(printAccountConfig, 2, 1, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+       
 
         customerOperationsWrapper.add(createCustomer, createCustomerConfig);
         customerOperationsWrapper.add(deleteCustomer, deleteCustomerConfig);
         customerOperationsWrapper.add(changeName, changeNameConfig);
         customerOperationsWrapper.add(createSavings, createSavingsConfig);
         customerOperationsWrapper.add(createCredit, createCreditConfig);
-        customerOperationsWrapper.add(printAccount, printAccountConfig);
+        
 
         GridBagConstraints customerOperationsWrapperConfig = new GridBagConstraints();
         setConstraints(customerOperationsWrapperConfig, 0, 0, 1, 1, "None", new Insets(0, 0, 0, 0), FIRST_LINE_START, 0.5, 0.5);
@@ -316,11 +331,17 @@ public class BankSystem extends JFrame {
         setConstraints(depositConfig, 0, 1, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
         GridBagConstraints withdrawConfig = new GridBagConstraints();
         setConstraints(withdrawConfig, 1, 1, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
-
+        GridBagConstraints printAccountConfig = new GridBagConstraints();
+        setConstraints(printAccountConfig, 0, 2, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+        GridBagConstraints openSavedTransactionConfig = new GridBagConstraints();
+        setConstraints(openSavedTransactionConfig, 1, 2, 1, 1, "None", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+        
         OperationsWrapper.add(deleteAccount, deleteAccountConfig);
         OperationsWrapper.add(getTransactions, getTransactionsConfig);
         OperationsWrapper.add(deposit, depositConfig);
         OperationsWrapper.add(withdraw, withdrawConfig);
+        OperationsWrapper.add(printAccount, printAccountConfig);
+        OperationsWrapper.add(openSavedTransaction, openSavedTransactionConfig);
         
         GridBagConstraints OperationsWrapperConfig = new GridBagConstraints();
         setConstraints(OperationsWrapperConfig, 0, 2, 1, 1, "both", new Insets(20, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
@@ -419,11 +440,12 @@ public class BankSystem extends JFrame {
         createCustomer = new JButton("Create new Customer");
         deleteCustomer = new JButton("Delete Customer");
         changeName = new JButton("Change customers name");
-        deposit = new JButton("Make deposit");
-        withdraw = new JButton("Make withdrawal");
+        deposit = new JButton("Make Deposit");
+        withdraw = new JButton("Make Withdrawal");
         getTransactions = new JButton("Get Transactions");
-        deleteAccount = new JButton("Delete account");
+        deleteAccount = new JButton("Delete Account");
         printAccount = new JButton("Print Account History");
+        openSavedTransaction = new JButton("Open Saved Transactions");
 
         createCustomer.setPreferredSize(new Dimension(200, 30));
         deleteCustomer.setPreferredSize(new Dimension(200, 30));
@@ -435,6 +457,7 @@ public class BankSystem extends JFrame {
         deposit.setPreferredSize(new Dimension(200, 30));
         withdraw.setPreferredSize(new Dimension(200, 30));
         printAccount.setPreferredSize(new Dimension(200, 30));
+        openSavedTransaction.setPreferredSize(new Dimension(200, 30));
         
        addButtonFunctions();
 
@@ -839,6 +862,11 @@ public class BankSystem extends JFrame {
             }
         });
         
+        /**
+         * Contains functionality for printing the Account history for the
+         * selected account to a file. Calls a help function to perform the
+         * actual saving operation after gathering all the information needed.
+         */
         printAccount.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -864,10 +892,33 @@ public class BankSystem extends JFrame {
             }
             
         });
+        
+        /**
+         * The ActionListener for the button with the name Open Saved Transactions
+         * Calls a help function to perform the task of opening and displaying 
+         * the saved transactions located in a saved file selected by the user.
+         */
+        openSavedTransaction.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                displayAccountHistory();
+            }
+            
+        });
     
     }
     
-    
+    /**
+     * 
+     * @param saldo
+     * @param myTransactions
+     * @param personalNumber
+     * @param accountID 
+     * 
+     * A Function that is responsible for printing the Account History of the selected account
+     * to a text file, which is placed inside the storage folder with an appropriate name
+     * containing information about the account. 
+     */
     private void printAccountHistory(double saldo, ArrayList<Transaction> myTransactions, String personalNumber, int accountID){
         
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -902,6 +953,86 @@ public class BankSystem extends JFrame {
                 
             }
         
+    }
+    
+    /**
+     * Lets the user choose a file and then displays the content in the selected
+     * file to the user in a separate window. The structure of the function is 
+     * dependent on how the information was saved to the file. Makes sure to
+     * catch the relevant exceptions to make sure the program runs smoothly.
+     */
+    private void displayAccountHistory(){
+        
+        JFileChooser chooser = new JFileChooser();
+        chooser.setCurrentDirectory(new File("guseks7_Files"));
+        chooser.setFileFilter(new FileNameExtensionFilter("Text Files", "txt"));
+        
+
+        int retrival = chooser.showOpenDialog(null);
+        if (retrival == JFileChooser.APPROVE_OPTION) {
+            try {
+                File file = chooser.getSelectedFile();
+                BufferedReader reader = new BufferedReader(new FileReader(file));
+                
+                String help = reader.readLine();
+                String savedDate = help.substring(14);
+                reader.readLine();
+                reader.readLine();
+
+                ArrayList<String> madeTransactions = new ArrayList();
+                String temp = reader.readLine();
+                while(!(temp.isEmpty())){
+                    madeTransactions.add(temp);
+                    temp = reader.readLine();
+                }
+                double saldo = Double.parseDouble(reader.readLine().substring(24));
+                
+                JPanel panel = new JPanel(new GridBagLayout());
+                DefaultListModel myModel = new DefaultListModel();
+                String info = file.getName();
+                String [] accountInfo = info.split("_");
+                accountInfo[1] = accountInfo[1].substring(0, 4);
+                JList display = new JList(myModel);
+
+                JScrollPane displayScroll = new JScrollPane(display, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                displayScroll.setPreferredSize(new Dimension(300, 150));
+                GridBagConstraints dateLabelConfig = new GridBagConstraints();
+                setConstraints(dateLabelConfig, 0, 0, 1, 1, "both", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+                GridBagConstraints customerLabelConfig = new GridBagConstraints();
+                setConstraints(customerLabelConfig, 0, 1, 1, 1, "both", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+                GridBagConstraints accountLabelConfig = new GridBagConstraints();
+                setConstraints(accountLabelConfig, 0, 2, 1, 1, "both", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+                GridBagConstraints transactionsLabelConfig = new GridBagConstraints();
+                setConstraints(transactionsLabelConfig, 0, 3, 1, 1, "both", new Insets(5, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+                
+                panel.add(new JLabel("Date: " +savedDate), dateLabelConfig);
+                panel.add(new JLabel("Customer: " + accountInfo[0]), customerLabelConfig);
+                panel.add(new JLabel("account ID: "+accountInfo[1]), accountLabelConfig);
+                panel.add(new JLabel("Made Transactions on selected Account:"), transactionsLabelConfig);
+                GridBagConstraints displayScrollConfig = new GridBagConstraints();
+                setConstraints(displayScrollConfig, 0, 4, 1, 1, "both", new Insets(10, 5, 0, 0), FIRST_LINE_START, 0.5, 0.5);
+                panel.add(displayScroll, displayScrollConfig);
+
+                myModel.removeAllElements();
+                for(String s : madeTransactions){
+                    myModel.addElement(s);
+                }
+                JOptionPane.showMessageDialog(null, panel, "Saved Transactions", JOptionPane.INFORMATION_MESSAGE);
+                
+                reader.close();
+            } 
+            catch (FileNotFoundException e){
+                JOptionPane.showMessageDialog(null, e.getMessage(), "", JOptionPane.WARNING_MESSAGE);
+                loadFromFileFunction();
+            }
+            catch(IOException e){
+                e.getMessage();
+            }
+            catch (Exception ex) {
+                ex.getMessage();
+                
+            }
+        } 
     }
     
     /**
