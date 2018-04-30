@@ -680,11 +680,16 @@ public class BankSystem extends JFrame {
                 int selectedRow = accountTable.getSelectedRow();
                 int selectedCustomer = customerTable.getSelectedRow();
 
-                personalNumberSelected = (String)myCustomerTableModel.getValueAt(selectedCustomer, 2);
                 
-                if (selectedRow == -1) {
+                if(selectedCustomer == -1){
+                    JOptionPane.showMessageDialog(null, "No Customer Selected", "", JOptionPane.PLAIN_MESSAGE);
+                }
+                else if (selectedRow == -1) {
                     JOptionPane.showMessageDialog(null, "No Account Selected", "", JOptionPane.PLAIN_MESSAGE);
-                } else {
+                } 
+                
+                else {
+                    personalNumberSelected = (String)myCustomerTableModel.getValueAt(selectedCustomer, 2);
                     int accountID = Integer.parseInt((String)myAccountTableModel.getValueAt(selectedRow, 0));
                     JPanel panel = new JPanel(new GridBagLayout());
                     DefaultTableModel myModel = new DefaultTableModel(){
@@ -739,12 +744,21 @@ public class BankSystem extends JFrame {
                 
                 int selectedRow = accountTable.getSelectedRow();
                 int selectedCustomer = customerTable.getSelectedRow();
-                personalNumberSelected = (String)myCustomerTableModel.getValueAt(selectedCustomer, 2);
-                int accountID = Integer.parseInt((String)myAccountTableModel.getValueAt(selectedRow, 0));
                 
-                if (selectedRow == -1) {
+                
+                
+                if (selectedCustomer == -1) {
+                    JOptionPane.showMessageDialog(null, "No Customer Selected", "", JOptionPane.PLAIN_MESSAGE);
+                    
+                }
+                else if(selectedRow == -1) {
+                    
                     JOptionPane.showMessageDialog(null, "No Account Selected", "", JOptionPane.PLAIN_MESSAGE);
-                } else {
+                    
+                }
+                else {
+                    int accountID = Integer.parseInt((String)myAccountTableModel.getValueAt(selectedRow, 0));
+                    personalNumberSelected = (String)myCustomerTableModel.getValueAt(selectedCustomer, 2);
                     ArrayList<Transaction> madeTransactions = myBank.getTransactions(personalNumberSelected, accountID);
                     
                     if(madeTransactions.isEmpty()){
@@ -791,24 +805,32 @@ public class BankSystem extends JFrame {
                 int selectedCustomer = customerTable.getSelectedRow();
                 int selectedRow = accountTable.getSelectedRow();
                 
-                personalNumberSelected = (String)myCustomerTableModel.getValueAt(selectedCustomer, 2);
-               
-                if (selectedRow == -1) {
-                    JOptionPane.showMessageDialog(null, "No Account Selected", "", JOptionPane.PLAIN_MESSAGE);
-                    return;
-                }
-                int accountID = Integer.parseInt((String)myAccountTableModel.getValueAt(selectedRow, 0));
-                double amount = getInput("deposit");
-                // If the provided input is ok, performs the deposit and changes
-                //the information in the table
-                if(amount != -1){
-                   
-                    myBank.deposit(personalNumberSelected, accountID, amount);
-                    myAccountTableModel.removeRow(selectedRow);
-                    String [] accountInfo = myBank.getAccount(personalNumberSelected, accountID).split(" ");
-                    myAccountTableModel.addRow(accountInfo);
-                }
                 
+                if(selectedCustomer == -1){
+                    JOptionPane.showMessageDialog(null, "No Customer Selected", "", JOptionPane.PLAIN_MESSAGE);
+                    
+                }
+                else if (selectedRow == -1) {
+                    JOptionPane.showMessageDialog(null, "No Account Selected", "", JOptionPane.PLAIN_MESSAGE);
+                    
+                }
+                else {
+                    personalNumberSelected = (String)myCustomerTableModel.getValueAt(selectedCustomer, 2);
+                
+                
+                    int accountID = Integer.parseInt((String)myAccountTableModel.getValueAt(selectedRow, 0));
+                    double amount = getInput("deposit");
+                    // If the provided input is ok, performs the deposit and changes
+                    //the information in the table
+                    if(amount != -1){
+
+                        myBank.deposit(personalNumberSelected, accountID, amount);
+                        myAccountTableModel.removeRow(selectedRow);
+                        String [] accountInfo = myBank.getAccount(personalNumberSelected, accountID).split(" ");
+                        myAccountTableModel.addRow(accountInfo);
+                    }
+                }
+
             }
             
         });
@@ -829,11 +851,16 @@ public class BankSystem extends JFrame {
                 int selectedCustomer = customerTable.getSelectedRow();
                 int selectedRow = accountTable.getSelectedRow();
                 
-                personalNumberSelected = (String)myCustomerTableModel.getValueAt(selectedCustomer, 2);
-            
-                if (selectedRow == -1) {
+                if(selectedCustomer == -1){
+                    JOptionPane.showMessageDialog(null, "No Customer Selected", "", JOptionPane.PLAIN_MESSAGE);
+                    return;
+                }
+                else if (selectedRow == -1) {
                     JOptionPane.showMessageDialog(null, "No Account Selected", "", JOptionPane.PLAIN_MESSAGE);
                     return;
+                }
+                else {
+                    personalNumberSelected = (String)myCustomerTableModel.getValueAt(selectedCustomer, 2);
                 }
                 int accountID = Integer.parseInt((String)myAccountTableModel.getValueAt(selectedRow, 0));
                 double saldo = Double.parseDouble((String)myAccountTableModel.getValueAt(selectedRow, 1));
