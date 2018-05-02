@@ -535,7 +535,7 @@ public class BankSystem extends JFrame {
                 panel.add(new JLabel("Personal Number"));
                 panel.add(personalNumber);
                 String[] customerData = new String[3];
-                int result = JOptionPane.showConfirmDialog(null, panel, "Add Loot",
+                int result = JOptionPane.showConfirmDialog(null, panel, "Create Customer",
                         JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 
                 if (result == JOptionPane.OK_OPTION) {
