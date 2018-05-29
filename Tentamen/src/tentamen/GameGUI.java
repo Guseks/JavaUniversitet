@@ -83,8 +83,6 @@ public class GameGUI {
     private void playGame(){
         int numberOfWords = myLogic.getNumberOfWords();
         int selectedWord = (int)(Math.random() * (numberOfWords));
-        System.out.println(numberOfWords);
-        System.out.println(selectedWord);
         Word word = myLogic.getWord(selectedWord);
         ArrayList<String> help = new ArrayList();
         for(int i = 0; i< word.getLength(); i++){
