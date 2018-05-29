@@ -86,7 +86,6 @@ public class GameGUI {
         System.out.println(numberOfWords);
         System.out.println(selectedWord);
         Word word = myLogic.getWord(selectedWord);
-        System.out.println("\nSelected Word: "+ word.getText());
         ArrayList<String> help = new ArrayList();
         for(int i = 0; i< word.getLength(); i++){
             help.add("_");
